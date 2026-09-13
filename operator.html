@@ -3,157 +3,129 @@
 <head>
   <meta charset="UTF-8">
   <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    /* Transisi Halus (Smooth Hardware Acceleration) */
-    .anim-container {
-      opacity: 0;
-      transform: translateY(50px) scale(var(--custom-scale, 1));
-      transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-      position: absolute;
-      width: 100%;
-    }
-    .show {
-      opacity: 1;
-      transform: translateY(var(--custom-y, 0px)) scale(var(--custom-scale, 1));
-      z-index: 10;
-    }
-    
-    /* CSS Variables yang dikontrol dari Operator */
-    :root {
-      --custom-y: 0px;
-      --custom-scale: 1;
-      --custom-font-family: 'Segoe UI', Tahoma, sans-serif;
-      --custom-font-size: 150%;
-    }
-
-    .dynamic-text {
-      font-family: var(--custom-font-family);
-      font-size: var(--custom-font-size);
-      word-break: break-word; /* Mencegah teks panjang menabrak kotak */
-      line-height: 1.1;
-    }
-
-    /* Background Media Player */
-    .bg-media { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -10; }
-  </style>
+  <title>Operator - Software Pengumuman Pemenang</title>
 </head>
-<body class="overflow-hidden m-0 w-screen h-screen flex flex-col items-center justify-center bg-black">
+<body class="bg-slate-900 text-white h-screen p-4 font-sans flex flex-col overflow-hidden">
   
-  <!-- Media Background (Bisa Video/Gambar) -->
-  <video id="bg-video" autoplay loop muted class="bg-media hidden"></video>
-  <img id="bg-image" class="bg-media hidden" />
-  
-  <!-- Fallback Background Gradient -->
-  <div id="bg-fallback" class="fixed inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-blue-900 via-slate-900 to-black -z-20"></div>
-
-  <!-- AREA KONTEN (Terkontrol oleh Slider Posisi & Skala) -->
-  <div id="main-wrapper" class="relative w-full h-full flex items-center justify-center">
-
-    <!-- BOX INDIVIDUAL (Tampil Satu Per Satu) -->
-    <div id="box-single" class="anim-container flex flex-col items-center justify-center px-10">
-      <div id="single-card" class="w-full max-w-4xl bg-gradient-to-tr from-yellow-600 to-amber-400 rounded-3xl border-4 border-white/20 p-12 text-center shadow-2xl">
-        <h2 id="single-title" class="text-4xl text-black font-black mb-4 tracking-widest uppercase">JUARA</h2>
-        <p id="single-name" class="dynamic-text text-white font-black drop-shadow-xl">-</p>
-      </div>
+  <!-- HEADER -->
+  <header class="flex justify-between items-center mb-4 pb-3 border-b border-slate-700">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 bg-blue-600 rounded flex items-center justify-center font-bold text-xl"><span class="text-white">P</span><span class="text-blue-200">P</span></div>
+      <h1 class="text-xl font-bold">Pengumuman Pemenang <span class="text-xs text-emerald-400">v2.0 Pro</span></h1>
     </div>
+    <button onclick="openLedWindow()" class="bg-emerald-600 hover:bg-emerald-500 px-4 py-2 rounded text-sm font-bold shadow-lg">🖥️ BUKA LAYAR 2 (LED)</button>
+  </header>
 
-    <!-- BOX SEMUA JUARA (Format Podium) -->
-    <div id="box-all" class="anim-container flex flex-col items-center justify-center w-full max-w-7xl px-8">
-      <h1 class="text-5xl font-black text-yellow-400 mb-8 tracking-widest uppercase drop-shadow-[0_5px_5px_rgba(0,0,0,0.8)]">PEMENANG LOMBA</h1>
+  <div class="flex gap-4 flex-1 h-full overflow-hidden">
+    <!-- PANEL KIRI (Scrollable) -->
+    <div class="w-1/3 bg-slate-800 p-4 rounded-xl shadow-xl flex flex-col gap-4 overflow-y-auto">
       
-      <!-- Layout Podium Grid (Anti Tabrakan) -->
-      <div class="grid grid-cols-3 gap-6 w-full items-end">
+      <!-- TAB DATA -->
+      <h2 class="font-bold text-blue-400 border-b border-slate-700 pb-2">1. Input Data Pemenang</h2>
+      <div class="space-y-3">
+        <div><label class="text-xs text-amber-500 font-bold">JUARA 3</label><input type="text" id="j3" placeholder="Nama / Nomor" class="w-full bg-slate-700 p-2 rounded outline-none border border-slate-600 focus:border-blue-500"></div>
+        <div><label class="text-xs text-slate-300 font-bold">JUARA 2</label><input type="text" id="j2" placeholder="Nama / Nomor" class="w-full bg-slate-700 p-2 rounded outline-none border border-slate-600 focus:border-blue-500"></div>
+        <div><label class="text-xs text-yellow-400 font-bold">JUARA 1</label><input type="text" id="j1" placeholder="Nama / Nomor" class="w-full bg-slate-700 p-2 rounded outline-none border border-slate-600 focus:border-blue-500"></div>
+      </div>
+
+      <!-- TOMBOL KONTROL -->
+      <div class="grid grid-cols-2 gap-2">
+        <button onclick="sendToLive('show-j3')" class="bg-amber-600 hover:bg-amber-500 p-3 rounded font-bold">Tampil J3</button>
+        <button onclick="sendToLive('show-j2')" class="bg-slate-300 hover:bg-white text-slate-900 p-3 rounded font-bold">Tampil J2</button>
+        <button onclick="sendToLive('show-j1')" class="bg-yellow-500 hover:bg-yellow-400 text-black p-3 rounded font-bold col-span-2">🏆 Tampil JUARA 1</button>
+        <button onclick="sendToLive('show-all')" class="bg-blue-600 hover:bg-blue-500 p-3 rounded font-bold col-span-2 mt-2">🌟 Tampilkan Semua (Podium)</button>
+        <button onclick="sendToLive('clear')" class="bg-red-600 hover:bg-red-500 p-3 rounded font-bold col-span-2 mt-2">✖ Bersihkan Layar</button>
+      </div>
+
+      <!-- TAB VISUAL -->
+      <h2 class="font-bold text-emerald-400 border-b border-slate-700 pb-2 mt-4">2. Kustomisasi Layar</h2>
+      <div class="space-y-4 text-sm">
         
-        <!-- Juara 3 (Kiri Bawah) -->
-        <div class="bg-black/70 backdrop-blur-md rounded-2xl border-t-4 border-amber-600 p-8 text-center shadow-lg transform translate-y-8">
-          <h2 class="text-2xl text-amber-500 mb-4 font-bold">JUARA 3</h2>
-          <p id="txt-all-j3" class="dynamic-text text-white font-bold">-</p>
+        <div>
+          <label class="block mb-1 text-slate-300">Background (Video / Gambar)</label>
+          <input type="file" id="bg-file" accept="video/*, image/*" onchange="updateVisuals()" class="w-full bg-slate-700 p-1 rounded">
+        </div>
+        
+        <div>
+          <label class="block mb-1 text-slate-300">Jenis Font (Nama)</label>
+          <select id="font-family" onchange="updateVisuals()" class="w-full bg-slate-700 p-2 rounded outline-none">
+            <option value="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">Default (Modern)</option>
+            <option value="Impact, fantasy">Impact (Tebal & Padat)</option>
+            <option value="'Arial Black', Gadget, sans-serif">Arial Black (Tebal Lebar)</option>
+            <option value="'Courier New', Courier, monospace">Courier (Digital/Retro)</option>
+          </select>
         </div>
 
-        <!-- Juara 1 (Tengah Atas) -->
-        <div class="bg-gradient-to-b from-yellow-600/90 to-black/90 backdrop-blur-md rounded-2xl border-2 border-yellow-400 p-10 text-center shadow-[0_0_50px_rgba(250,204,21,0.3)] transform -translate-y-6 z-10">
-          <h2 class="text-4xl text-yellow-400 mb-4 font-black">JUARA 1</h2>
-          <p id="txt-all-j1" class="dynamic-text text-white font-black text-shadow-lg scale-110">-</p>
+        <div>
+          <label class="block mb-1 text-slate-300">Ukuran Font Nama</label>
+          <input type="range" id="font-size" min="100" max="300" value="150" oninput="updateVisuals()" class="w-full">
         </div>
 
-        <!-- Juara 2 (Kanan Bawah) -->
-        <div class="bg-black/70 backdrop-blur-md rounded-2xl border-t-4 border-slate-400 p-8 text-center shadow-lg transform translate-y-8">
-          <h2 class="text-2xl text-slate-300 mb-4 font-bold">JUARA 2</h2>
-          <p id="txt-all-j2" class="dynamic-text text-white font-bold">-</p>
+        <div>
+          <label class="block mb-1 text-slate-300">Ukuran Kotak (Besar/Kecil)</label>
+          <input type="range" id="box-scale" min="50" max="150" value="100" oninput="updateVisuals()" class="w-full">
+        </div>
+
+        <div>
+          <label class="block mb-1 text-slate-300">Posisi Kotak (Atas/Bawah)</label>
+          <input type="range" id="box-y" min="-500" max="500" value="0" oninput="updateVisuals()" class="w-full">
         </div>
 
       </div>
     </div>
 
+    <!-- PANEL KANAN (Hanya Status & Live Output Monitor) -->
+    <div class="w-2/3 bg-slate-800 p-3 rounded-xl shadow-xl flex flex-col border border-slate-600">
+      <h2 class="font-bold text-xs text-red-400 mb-2 animate-pulse">🔴 STATUS LAYAR LED</h2>
+      <div class="w-full h-full bg-black rounded border border-slate-700 flex flex-col items-center justify-center text-center">
+        <h1 class="text-4xl text-slate-700 font-bold">CEK TAMPILAN DI LAYAR 2</h1>
+        <p class="text-slate-500 mt-2">Semua pengaturan visual akan langsung berubah secara real-time di layar LED (Layar 2).</p>
+      </div>
+    </div>
   </div>
 
   <script>
     const { ipcRenderer } = require('electron');
-    const root = document.documentElement;
-    const boxAll = document.getElementById('box-all');
-    const boxSingle = document.getElementById('box-single');
 
-    ipcRenderer.on('update-led', (event, data) => {
+    function openLedWindow() { ipcRenderer.send('open-led'); }
+
+    // Fungsi Utama Mengirim Data Teks
+    function sendToLive(action) {
+      const data = {
+        action: action,
+        j1: document.getElementById('j1').value || '-',
+        j2: document.getElementById('j2').value || '-',
+        j3: document.getElementById('j3').value || '-',
+      };
+      ipcRenderer.send('send-to-led', data);
       
-      // JIKA DATA VISUAL DARI SLIDER
-      if(data.action === 'update-visuals') {
-        root.style.setProperty('--custom-y', data.boxY);
-        root.style.setProperty('--custom-scale', data.boxScale);
-        root.style.setProperty('--custom-font-size', data.fontSize);
-        root.style.setProperty('--custom-font-family', data.fontFamily);
+      // Paksa update visual setiap kali animasi di-trigger
+      setTimeout(updateVisuals, 100); 
+    }
 
-        // Update Background Media
-        if(data.bgPath) {
-          const videoEl = document.getElementById('bg-video');
-          const imageEl = document.getElementById('bg-image');
-          document.getElementById('bg-fallback').classList.add('hidden');
+    // Fungsi Mengirim Data Visual (Realtime)
+    function updateVisuals() {
+      const fileInput = document.getElementById('bg-file');
+      let bgPath = null;
+      let bgType = null;
 
-          // Cek apakah Video atau Gambar
-          if (data.bgType && data.bgType.startsWith('video/')) {
-            imageEl.classList.add('hidden');
-            videoEl.src = 'file://' + data.bgPath;
-            videoEl.classList.remove('hidden');
-            videoEl.play();
-          } else {
-            videoEl.classList.add('hidden');
-            imageEl.src = 'file://' + data.bgPath;
-            imageEl.classList.remove('hidden');
-          }
-        }
-        return; // Jangan jalankan animasi jika hanya ubah visual
+      if (fileInput.files.length > 0) {
+        bgPath = fileInput.files[0].path; // Mengambil path asli dari hardisk
+        bgType = fileInput.files[0].type;
       }
 
-      // JIKA TRIGGER DATA PEMENANG
-      boxAll.classList.remove('show');
-      boxSingle.classList.remove('show');
-      
-      if(data.action === 'clear') return;
+      const visualData = {
+        action: 'update-visuals',
+        bgPath: bgPath,
+        bgType: bgType,
+        fontFamily: document.getElementById('font-family').value,
+        fontSize: document.getElementById('font-size').value + '%',
+        boxScale: document.getElementById('box-scale').value / 100, // Format desimal (0.5 - 1.5)
+        boxY: document.getElementById('box-y').value + 'px'
+      };
 
-      setTimeout(() => {
-        if(data.action === 'show-all') {
-          document.getElementById('txt-all-j3').innerText = data.j3;
-          document.getElementById('txt-all-j2').innerText = data.j2;
-          document.getElementById('txt-all-j1').innerText = data.j1;
-          boxAll.classList.add('show');
-        } else {
-          const singleCard = document.getElementById('single-card');
-          if(data.action === 'show-j3') {
-            document.getElementById('single-title').innerText = "JUARA 3";
-            document.getElementById('single-name').innerText = data.j3;
-            singleCard.className = "w-full max-w-4xl bg-gradient-to-tr from-amber-700 to-amber-900 rounded-3xl border-2 border-amber-500 p-12 text-center shadow-2xl";
-          } else if(data.action === 'show-j2') {
-            document.getElementById('single-title').innerText = "JUARA 2";
-            document.getElementById('single-name').innerText = data.j2;
-            singleCard.className = "w-full max-w-4xl bg-gradient-to-tr from-slate-400 to-slate-600 rounded-3xl border-2 border-slate-300 p-12 text-center shadow-2xl";
-          } else if(data.action === 'show-j1') {
-            document.getElementById('single-title').innerText = "JUARA 1";
-            document.getElementById('single-name').innerText = data.j1;
-            singleCard.className = "w-full max-w-4xl bg-gradient-to-tr from-yellow-500 to-yellow-600 rounded-3xl border-4 border-yellow-300 p-14 text-center shadow-[0_0_50px_rgba(250,204,21,0.5)]";
-          }
-          boxSingle.classList.add('show');
-        }
-      }, 400); 
-    });
+      ipcRenderer.send('send-to-led', visualData);
+    }
   </script>
 </body>
 </html>
