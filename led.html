@@ -30,7 +30,6 @@
     <div id="bg-fallback" class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-900 to-black -z-20"></div>
 
     <div id="box-single" class="anim-container px-10 hidden">
-      <!-- SUSUNAN YANG BENAR: JUDUL DI ATAS, KATEGORI DI BAWAHNYA -->
       <h1 id="single-title-main" class="font-black text-white mb-4 tracking-widest uppercase drop-shadow-[0_5px_5px_rgba(0,0,0,0.8)]" style="font-size: var(--font-main);">PEMENANG LOMBA</h1>
       <h3 id="single-category" class="title-category font-bold text-white mb-8 uppercase tracking-[0.2em] bg-black/60 px-8 py-2 rounded-full border border-white/20 hidden">KATEGORI</h3>
       
@@ -42,7 +41,6 @@
     </div>
 
     <div id="box-all" class="anim-container w-full px-8 hidden">
-      <!-- SUSUNAN YANG BENAR: JUDUL DI ATAS, KATEGORI DI BAWAHNYA -->
       <h1 id="main-title" class="font-black text-white mb-4 tracking-widest uppercase drop-shadow-[0_5px_5px_rgba(0,0,0,0.8)]">PEMENANG LOMBA</h1>
       <h3 id="all-category" class="title-category font-bold text-white mb-8 uppercase tracking-[0.2em] bg-black/60 px-8 py-2 rounded-full border border-white/20 hidden">KATEGORI</h3>
       
@@ -72,13 +70,6 @@
     const boxAll = document.getElementById('box-all');
     const boxSingle = document.getElementById('box-single');
 
-    function getSafeFileURI(filePath) {
-      if (!filePath) return '';
-      let safePath = filePath.replace(/\\/g, '/');
-      if (!safePath.startsWith('/')) safePath = '/' + safePath;
-      return 'file://' + encodeURI(safePath).replace(/#/g, '%23').replace(/\?/g, '%3F');
-    }
-
     ipcRenderer.on('update-led', (event, data) => {
       if(data.action === 'update-visuals') {
         root.style.setProperty('--pos-y', data.boxY); root.style.setProperty('--box-scale', data.boxScale);
@@ -93,7 +84,8 @@
           const imageEl = document.getElementById('bg-image');
           document.getElementById('bg-fallback').classList.add('hidden');
           
-          const safeURI = getSafeFileURI(data.bgPath); // PENGGUNAAN PATH MURNI ANTI GAGAL
+          // TANGKAP DARI SERVER LOKAL BUKAN DARI HARDISK
+          const safeURI = 'http://localhost:49201/bg-media?t=' + Date.now();
 
           if (data.bgType && data.bgType.startsWith('video/')) {
             imageEl.classList.add('hidden');
