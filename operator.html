@@ -9,23 +9,22 @@
     ::-webkit-scrollbar-track { background: #1e293b; }
     ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+    
+    /* Mirror Style untuk Live Preview agar mirip LED */
+    .prev-box { border: 2px solid rgba(255,255,255,0.4); border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
   </style>
 </head>
 <body class="bg-slate-900 text-white h-screen p-4 font-sans flex flex-col overflow-hidden relative">
   
-  <!-- LOCK SCREEN SYSTEM -->
   <div id="lock-screen" class="fixed inset-0 bg-slate-950 z-50 flex items-center justify-center">
     <div class="bg-slate-800 p-8 rounded-xl shadow-2xl max-w-md w-full text-center border border-slate-700">
       <div class="w-16 h-16 bg-blue-600 rounded-xl mx-auto flex items-center justify-center font-bold text-3xl border-2 border-blue-400 mb-4 shadow-[0_0_20px_rgba(37,99,235,0.5)]">PP</div>
       <h2 class="text-2xl font-bold text-white mb-1">Aktivasi Software</h2>
       <p class="text-slate-400 text-sm mb-6">Kirim Hardware ID ini ke Admin untuk mendapatkan License Key.</p>
-      
       <label class="text-xs text-slate-400 block text-left mb-1">Hardware ID Anda:</label>
       <input type="text" id="hwid-display" readonly class="w-full bg-slate-900 text-emerald-400 p-3 rounded mb-4 text-center font-mono font-bold border border-slate-600 select-all focus:outline-none">
-      
       <label class="text-xs text-slate-400 block text-left mb-1">Masukkan License Key:</label>
-      <input type="text" id="license-input" placeholder="Paste key dari admin di sini" class="w-full bg-slate-700 text-white p-3 rounded mb-6 border border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-center">
-      
+      <input type="text" id="license-input" placeholder="Paste key dari admin di sini" class="w-full bg-slate-700 text-white p-3 rounded mb-6 border border-blue-500 focus:outline-none font-mono text-center">
       <button onclick="activateApp()" class="w-full bg-blue-600 hover:bg-blue-500 py-3 rounded font-bold transition shadow-lg text-lg">AKTIVASI SEKARANG</button>
     </div>
   </div>
@@ -33,12 +32,13 @@
   <header class="flex justify-between items-center mb-4 pb-3 border-b border-slate-700 shrink-0">
     <div class="flex items-center gap-3">
       <div class="w-10 h-10 bg-blue-600 rounded flex items-center justify-center font-bold text-xl shadow-lg border border-blue-400">PP</div>
-      <h1 class="text-xl font-bold">Pengumuman Pemenang <span class="bg-emerald-600 text-xs px-2 py-1 rounded ml-2">v7.1 Bug Fix</span></h1>
+      <h1 class="text-xl font-bold">Pengumuman Pemenang <span class="bg-emerald-600 text-xs px-2 py-1 rounded ml-2">v8.0 Perfect Sync</span></h1>
     </div>
     <button onclick="openLedWindow()" class="bg-emerald-600 hover:bg-emerald-500 px-6 py-2 rounded font-bold shadow-[0_0_15px_rgba(16,185,129,0.5)] transition">🖥️ BUKA LAYAR 2 (LED)</button>
   </header>
 
   <div class="flex gap-4 flex-1 h-full overflow-hidden">
+    
     <!-- PANEL KIRI -->
     <div class="w-[45%] bg-slate-800 p-4 rounded-xl shadow-xl flex flex-col gap-4 overflow-y-auto">
       
@@ -75,7 +75,6 @@
             <div class="space-y-1"><label class="text-[10px] text-slate-300 font-bold block">JUARA 2</label><input type="text" id="j2-no" oninput="updateStandbyPreview()" placeholder="Nomor" class="w-full bg-slate-900 p-2 rounded border border-slate-600 text-sm"><input type="text" id="j2-nama" oninput="updateStandbyPreview()" placeholder="Nama" class="w-full bg-slate-900 p-2 rounded border border-slate-600 text-sm font-bold"></div>
           </div>
         </div>
-
         <div class="grid grid-cols-3 gap-2">
           <button onclick="sendToLive('show-j3')" class="bg-amber-700 hover:bg-amber-600 p-2 rounded font-bold text-xs">Tayang J3 ➔</button>
           <button onclick="sendToLive('show-j1')" class="bg-yellow-600 hover:bg-yellow-500 text-black p-2 rounded font-bold text-xs">Tayang J1 ➔</button>
@@ -104,10 +103,14 @@
              <div><label class="block mb-1">Ukuran Tulisan "JUARA"</label><input type="range" id="title-size" min="50" max="250" value="100" oninput="updateVisuals()" class="w-full"></div>
              <div><label class="block mb-1 text-blue-300">Ukuran NOMOR Dada</label><input type="range" id="no-size" min="50" max="300" value="120" oninput="updateVisuals()" class="w-full"></div>
              <div><label class="block mb-1 text-emerald-300">Ukuran NAMA Pemenang</label><input type="range" id="font-size" min="50" max="300" value="150" oninput="updateVisuals()" class="w-full"></div>
-             <div><label class="block mb-1 text-fuchsia-300">Ukuran KOTAK (Skala)</label><input type="range" id="box-scale" min="50" max="150" value="100" oninput="updateVisuals()" class="w-full"></div>
+             <div><label class="block mb-1 text-fuchsia-300">Skala KOTAK (Besar/Kecil)</label><input type="range" id="box-scale" min="50" max="150" value="100" oninput="updateVisuals()" class="w-full"></div>
           </div>
-          <div><label class="block mb-1 text-white">Posisi Kotak Keseluruhan (Geser Atas/Bawah)</label><input type="range" id="box-y" min="-500" max="500" value="0" oninput="updateVisuals()" class="w-full"></div>
           
+          <div class="grid grid-cols-2 gap-4 border-b border-slate-600 pb-4">
+             <div><label class="block mb-1 text-white">Posisi Kotak (Geser Atas/Bawah)</label><input type="range" id="box-y" min="-500" max="500" value="0" oninput="updateVisuals()" class="w-full"></div>
+             <div><label class="block mb-1 text-orange-300">Ketinggian Kotak (Ruang Atas-Bawah)</label><input type="range" id="box-pad" min="20" max="150" value="48" oninput="updateVisuals()" class="w-full"></div>
+          </div>
+
           <div class="mt-4 p-3 bg-slate-900 rounded border border-slate-700">
             <label class="block mb-1 text-yellow-400">Background (Video / Gambar Bebas)</label>
             <input type="file" id="bg-file" accept="video/*, image/*" onchange="updateVisuals()" class="w-full bg-slate-800 p-2 rounded cursor-pointer border border-slate-600 text-white">
@@ -123,11 +126,14 @@
       <div class="bg-slate-800 p-3 rounded-xl shadow-xl border border-slate-600 flex flex-col shrink-0">
         <h2 class="font-bold text-xs text-blue-400 mb-2 flex items-center"><span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse mr-2"></span> PREVIEW STANDBY (16:9)</h2>
         <div class="w-full aspect-video bg-black rounded border-2 border-dashed border-slate-600 relative overflow-hidden flex flex-col items-center justify-center p-4">
-          <p id="prev-kat" class="text-[10px] font-bold text-white mb-2 uppercase tracking-widest bg-blue-900/80 px-4 py-1 rounded-full hidden">KATEGORI</p>
+          <!-- Standby Preview kini disesuaikan agar susunannya 100% mirip -->
+          <h1 class="text-xl font-black text-white/50 mb-1 tracking-widest uppercase">PEMENANG LOMBA</h1>
+          <p id="prev-kat" class="text-[10px] font-bold text-white/50 mb-2 uppercase tracking-widest bg-blue-900/50 px-4 py-1 rounded-full hidden">KATEGORI</p>
+          
           <div class="grid grid-cols-3 gap-2 w-full text-center items-end">
-            <div class="bg-amber-700/50 p-2 rounded border border-amber-600/30"><p class="text-[9px] text-amber-400 font-bold">JUARA 3</p><p id="prev-j3-no" class="text-xs text-white/80 font-mono mt-1">-</p><p id="prev-j3-nama" class="text-sm font-bold text-white truncate">-</p></div>
-            <div class="bg-yellow-600/50 p-3 rounded border-2 border-yellow-500 z-10 shadow-lg"><p class="text-[10px] text-yellow-400 font-bold">JUARA 1</p><p id="prev-j1-no" class="text-sm text-white/90 font-mono mt-1">-</p><p id="prev-j1-nama" class="text-lg font-black text-white truncate">-</p></div>
-            <div class="bg-slate-600/50 p-2 rounded border border-slate-500/30"><p class="text-[9px] text-slate-300 font-bold">JUARA 2</p><p id="prev-j2-no" class="text-xs text-white/80 font-mono mt-1">-</p><p id="prev-j2-nama" class="text-sm font-bold text-white truncate">-</p></div>
+            <div class="prev-box bg-amber-700/50 py-2 px-1"><p class="text-[9px] text-black font-bold">JUARA 3</p><p id="prev-j3-no" class="text-[10px] text-white/80 font-mono mt-1">-</p><p id="prev-j3-nama" class="text-xs font-bold text-white truncate">-</p></div>
+            <div class="prev-box bg-yellow-600/50 py-4 px-2 border-2 border-yellow-500/50 z-10"><p class="text-[10px] text-black font-bold">JUARA 1</p><p id="prev-j1-no" class="text-xs text-white/90 font-mono mt-1">-</p><p id="prev-j1-nama" class="text-sm font-black text-white truncate">-</p></div>
+            <div class="prev-box bg-slate-600/50 py-2 px-1"><p class="text-[9px] text-black font-bold">JUARA 2</p><p id="prev-j2-no" class="text-[10px] text-white/80 font-mono mt-1">-</p><p id="prev-j2-nama" class="text-xs font-bold text-white truncate">-</p></div>
           </div>
         </div>
       </div>
@@ -149,7 +155,6 @@
     let savedBgType = localStorage.getItem('bgType') || null;
 
     window.addEventListener('DOMContentLoaded', async () => {
-      // 1. Cek Lisensi
       if(localStorage.getItem('isActivated') === 'true') {
         document.getElementById('lock-screen').style.display = 'none';
       } else {
@@ -157,8 +162,7 @@
         document.getElementById('hwid-display').value = hwid;
       }
 
-      // 2. Load Visuals
-      const settingIds = ['col-j3', 'col-j1', 'col-j2', 'title-size', 'no-size', 'font-size', 'box-y', 'size-main', 'size-kat', 'box-scale'];
+      const settingIds = ['col-j3', 'col-j1', 'col-j2', 'title-size', 'no-size', 'font-size', 'box-y', 'size-main', 'size-kat', 'box-scale', 'box-pad'];
       settingIds.forEach(id => {
         const savedVal = localStorage.getItem(id);
         if (savedVal) document.getElementById(id).value = savedVal;
@@ -180,9 +184,7 @@
         localStorage.setItem('isActivated', 'true');
         document.getElementById('lock-screen').style.display = 'none';
         alert("Aktivasi Berhasil! Selamat Datang.");
-      } else {
-        alert("License Key Salah!");
-      }
+      } else { alert("License Key Salah!"); }
     }
 
     function addToQueue() {
@@ -191,19 +193,14 @@
       const j2no = document.getElementById('q-j2-no').value; const j2nama = document.getElementById('q-j2-nama').value;
       const j3no = document.getElementById('q-j3-no').value; const j3nama = document.getElementById('q-j3-nama').value;
       
-      // Jangan jalankan jika form kosong
       if(!k && !j1nama && !j2nama && !j3nama) return; 
       queue.push({k, j1no, j1nama, j2no, j2nama, j3no, j3nama});
       
-      // Bersihkan input setelah klik Tambah
       document.getElementById('q-kat').value = '';
       document.getElementById('q-j1-no').value = ''; document.getElementById('q-j1-nama').value = '';
       document.getElementById('q-j2-no').value = ''; document.getElementById('q-j2-nama').value = '';
       document.getElementById('q-j3-no').value = ''; document.getElementById('q-j3-nama').value = '';
       renderQueue();
-      
-      // Focus kembali ke input kategori untuk mempermudah ngetik
-      document.getElementById('q-kat').focus();
     }
 
     function renderQueue() {
@@ -224,12 +221,10 @@
       updateStandbyPreview();
     }
 
-    // FIX BUGS: Menghapus peringatan confirm() yang membuat Electron membeku (Freeze)
+    // FIX DAFTAR TUNGGU FREEZE: Menghapus alert/confirm sepenuhnya
     function deleteQueue(idx) { 
       queue.splice(idx, 1); 
       renderQueue(); 
-      // Focus ke area lain agar keyboard tetap aktif
-      document.getElementById('q-kat').focus();
     }
 
     function updateStandbyPreview() {
@@ -259,22 +254,30 @@
       };
       
       const liveDiv = document.getElementById('live-container');
+      const colJ1 = document.getElementById('col-j1').value;
+      const colJ2 = document.getElementById('col-j2').value;
+      const colJ3 = document.getElementById('col-j3').value;
+
+      // UPDATE LIVE PREVIEW 100% SAMA FORMASINYA DENGAN LED
       if(action === 'clear') {
         liveDiv.innerHTML = '<p class="text-slate-600 text-sm font-bold">Layar Kosong (Standby)</p>';
       } else if (action === 'show-all') {
-        let katHtml = kat ? `<p class="text-[10px] font-bold text-white mb-2 uppercase bg-red-900/80 px-3 py-1 rounded-full">${kat}</p>` : '';
-        liveDiv.innerHTML = `${katHtml}
-          <div class="grid grid-cols-3 gap-2 w-full text-center items-end">
-            <div class="bg-amber-700 p-2 rounded"><p class="text-[9px] text-amber-200">JUARA 3</p><p class="text-xs text-white/80">${dataLive.j3no}</p><p class="text-sm font-bold truncate text-white">${dataLive.j3nama}</p></div>
-            <div class="bg-yellow-600 p-3 rounded border-2 border-yellow-400"><p class="text-[10px] text-yellow-200 font-bold">JUARA 1</p><p class="text-sm text-white/90">${dataLive.j1no}</p><p class="text-lg font-black truncate text-white">${dataLive.j1nama}</p></div>
-            <div class="bg-slate-600 p-2 rounded"><p class="text-[9px] text-slate-200">JUARA 2</p><p class="text-xs text-white/80">${dataLive.j2no}</p><p class="text-sm font-bold truncate text-white">${dataLive.j2nama}</p></div>
+        let katHtml = kat ? `<p class="text-[10px] font-bold text-white mb-2 uppercase bg-black/60 px-3 py-1 rounded-full border border-white/20">${kat}</p>` : '';
+        liveDiv.innerHTML = `
+          <h1 class="text-xl font-black text-white mb-1 tracking-widest uppercase drop-shadow">PEMENANG LOMBA</h1>
+          ${katHtml}
+          <div class="grid grid-cols-3 gap-2 w-full text-center items-end mt-2">
+            <div class="prev-box py-2 px-1" style="background-color: ${colJ3}"><p class="text-[9px] text-black font-bold">JUARA 3</p><p class="text-[10px] text-white/90 font-mono mt-1">${dataLive.j3no}</p><p class="text-xs font-bold truncate text-white">${dataLive.j3nama}</p></div>
+            <div class="prev-box py-4 px-2 border-2 z-10" style="background-color: ${colJ1}"><p class="text-[10px] text-black font-bold">JUARA 1</p><p class="text-xs text-white/90 font-mono mt-1">${dataLive.j1no}</p><p class="text-sm font-black truncate text-white">${dataLive.j1nama}</p></div>
+            <div class="prev-box py-2 px-1" style="background-color: ${colJ2}"><p class="text-[9px] text-black font-bold">JUARA 2</p><p class="text-[10px] text-white/90 font-mono mt-1">${dataLive.j2no}</p><p class="text-xs font-bold truncate text-white">${dataLive.j2nama}</p></div>
           </div>`;
       } else {
         let title = action === 'show-j1' ? 'JUARA 1' : (action === 'show-j2' ? 'JUARA 2' : 'JUARA 3');
-        let katHtml = kat ? `<p class="text-[10px] font-bold text-white mb-2 uppercase">${kat}</p>` : '';
+        let katHtml = kat ? `<p class="text-[10px] font-bold text-white mb-2 uppercase bg-black/60 px-3 py-1 rounded-full border border-white/20">${kat}</p>` : '';
         let no = action === 'show-j1' ? dataLive.j1no : (action === 'show-j2' ? dataLive.j2no : dataLive.j3no);
         let nama = action === 'show-j1' ? dataLive.j1nama : (action === 'show-j2' ? dataLive.j2nama : dataLive.j3nama);
-        liveDiv.innerHTML = `${katHtml}<div class="bg-blue-900 p-4 rounded text-center border border-blue-500 w-3/4"><p class="text-xs text-blue-300 font-bold mb-1">${title}</p><p class="text-sm text-white/80">${no}</p><p class="text-2xl font-black text-white truncate">${nama}</p></div>`;
+        let activeCol = action === 'show-j1' ? colJ1 : (action === 'show-j2' ? colJ2 : colJ3);
+        liveDiv.innerHTML = `${katHtml}<div class="prev-box p-4 text-center w-3/4" style="background-color: ${activeCol}"><p class="text-xs text-black font-bold mb-1">${title}</p><p class="text-xs text-white/90 font-mono">${no}</p><p class="text-xl font-black text-white truncate">${nama}</p></div>`;
       }
 
       ipcRenderer.send('send-to-led', dataLive);
@@ -293,7 +296,7 @@
         document.getElementById('bg-status').innerText = `✅ Tersimpan: ${fileName}`;
       }
 
-      const settings = ['col-j3', 'col-j1', 'col-j2', 'title-size', 'no-size', 'font-size', 'box-y', 'size-main', 'size-kat', 'box-scale'];
+      const settings = ['col-j3', 'col-j1', 'col-j2', 'title-size', 'no-size', 'font-size', 'box-y', 'size-main', 'size-kat', 'box-scale', 'box-pad'];
       settings.forEach(id => { localStorage.setItem(id, document.getElementById(id).value); });
 
       ipcRenderer.send('send-to-led', {
@@ -302,6 +305,7 @@
         sizeMain: document.getElementById('size-main').value + 'px',
         sizeKat: document.getElementById('size-kat').value + 'px',
         boxScale: document.getElementById('box-scale').value / 100,
+        boxPad: document.getElementById('box-pad').value + 'px',
         noSize: document.getElementById('no-size').value + '%',
         fontSize: document.getElementById('font-size').value + '%',
         titleSize: document.getElementById('title-size').value + '%',
