@@ -1,0 +1,53 @@
+name: Build Android APK (Key Generator)
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+
+      - name: Convert HTML to APK (Cordova)
+        run: |
+          # Install Cordova
+          npm install -g cordova
+          
+          # Buat proyek Android kosong
+          cordova create keygen_app com.studio.keygen "KeyGen PP"
+          
+          # Kosongkan file bawaan
+          rm -rf keygen_app/www/*
+          
+          # Cek apakah keygen.html ada, lalu jadikan tampilan utama APK
+          if [ ! -f "keygen.html" ]; then
+            echo "ERROR: File keygen.html tidak ditemukan! Buat dulu filenya."
+            exit 1
+          fi
+          cp keygen.html keygen_app/www/index.html
+          
+          # Compile menjadi APK
+          cd keygen_app
+          cordova platform add android
+          cordova build android
+
+      - name: Upload APK File
+        uses: actions/upload-artifact@v4
+        with:
+          name: KeyGenerator-APK
+          path: keygen_app/platforms/android/app/build/outputs/apk/debug/app-debug.apk
