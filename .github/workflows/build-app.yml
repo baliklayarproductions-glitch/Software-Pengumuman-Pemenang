@@ -3,7 +3,7 @@ name: Build Desktop App
 on:
   push:
     branches: [ "main" ]
-  workflow_dispatch: # Memungkinkan Anda menekan tombol "Run" secara manual
+  workflow_dispatch:
 
 jobs:
   build:
@@ -33,4 +33,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: software-pemenang-${{ matrix.os }}
-          path: dist/*.*\
+          path: dist/
