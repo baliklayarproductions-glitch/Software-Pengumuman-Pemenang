@@ -1,17 +1,12 @@
-const { app, BrowserWindow, screen, ipcMain, protocol } = require('electron');
+const { app, BrowserWindow, screen, ipcMain } = require('electron');
 const { machineIdSync } = require('node-machine-id');
-const path = require('path'); // MODUL WAJIB UNTUK MEMPERBAIKI PATH WINDOWS
-
-protocol.registerSchemesAsPrivileged([
-  { scheme: 'asset', privileges: { secure: true, bypassCSP: true, stream: true, supportFetchAPI: true } }
-]);
 
 let operatorWindow, ledWindow;
 
 function createOperatorWindow() {
   operatorWindow = new BrowserWindow({
     width: 1280, height: 800, backgroundColor: '#0f172a',
-    webPreferences: { nodeIntegration: true, contextIsolation: false }
+    webPreferences: { nodeIntegration: true, contextIsolation: false, webSecurity: false }
   });
   operatorWindow.loadFile('operator.html');
 }
@@ -50,25 +45,5 @@ ipcMain.on('send-to-led', (event, data) => {
   if (ledWindow) ledWindow.webContents.send('update-led', data);
 });
 
-app.whenReady().then(() => {
-  
-  // PROTOKOL ANTI-GAGAL KHUSUS WINDOWS
-  protocol.registerFileProtocol('asset', (request, callback) => {
-    let url = request.url.replace('asset://', '');
-    try { url = decodeURIComponent(url); } catch (e) {}
-
-    // Normalisasi jalur file
-    let filePath = path.normalize(url);
-
-    // FIX WINDOWS: Hapus garis miring siluman di depan huruf C: (\C:\... menjadi C:\...)
-    if (process.platform === 'win32' && filePath.startsWith('\\')) {
-      filePath = filePath.slice(1);
-    }
-
-    callback({ path: filePath });
-  });
-
-  createOperatorWindow();
-});
-
+app.whenReady().then(createOperatorWindow);
 app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(); });
