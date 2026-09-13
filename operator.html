@@ -1,112 +1,265 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
   <meta charset="UTF-8">
   <script src="https://cdn.tailwindcss.com"></script>
-  <title>Operator - Software Pengumuman Pemenang</title>
+  <title>Operator - Pengumuman Pemenang</title>
+  <style>
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #1e293b; }
+    ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+  </style>
 </head>
 <body class="bg-slate-900 text-white h-screen p-4 font-sans flex flex-col overflow-hidden">
   
-  <!-- HEADER -->
-  <header class="flex justify-between items-center mb-4 pb-3 border-b border-slate-700">
+  <header class="flex justify-between items-center mb-4 pb-3 border-b border-slate-700 shrink-0">
     <div class="flex items-center gap-3">
-      <div class="w-10 h-10 bg-blue-600 rounded flex items-center justify-center font-bold text-xl"><span class="text-white">P</span><span class="text-blue-200">P</span></div>
-      <h1 class="text-xl font-bold">Pengumuman Pemenang <span class="text-xs text-emerald-400">v2.1 Pro</span></h1>
+      <div class="w-10 h-10 bg-blue-600 rounded flex items-center justify-center font-bold text-xl shadow-lg border border-blue-400">PP</div>
+      <h1 class="text-xl font-bold">Pengumuman Pemenang <span class="bg-emerald-600 text-xs px-2 py-1 rounded ml-2">v4.0 Final</span></h1>
     </div>
-    <button onclick="openLedWindow()" class="bg-emerald-600 hover:bg-emerald-500 px-4 py-2 rounded text-sm font-bold shadow-lg">🖥️ BUKA LAYAR 2 (LED)</button>
+    <button onclick="openLedWindow()" class="bg-emerald-600 hover:bg-emerald-500 px-6 py-2 rounded font-bold shadow-[0_0_15px_rgba(16,185,129,0.5)] transition">🖥️ BUKA LAYAR 2 (LED)</button>
   </header>
 
   <div class="flex gap-4 flex-1 h-full overflow-hidden">
+    
     <!-- PANEL KIRI -->
-    <div class="w-1/3 bg-slate-800 p-4 rounded-xl shadow-xl flex flex-col gap-4 overflow-y-auto">
+    <div class="w-[45%] bg-slate-800 p-4 rounded-xl shadow-xl flex flex-col gap-4 overflow-y-auto">
       
-      <!-- TAB DATA -->
-      <h2 class="font-bold text-blue-400 border-b border-slate-700 pb-2">1. Input Data Pemenang</h2>
-      <div class="space-y-3">
-        <!-- INPUT KATEGORI BARU -->
-        <div>
-          <label class="text-xs text-blue-300 font-bold">KATEGORI LOMBA</label>
-          <input type="text" id="kategori" placeholder="Contoh: 10K PUTRA / UMUM" class="w-full bg-slate-700 p-2 rounded outline-none border border-slate-600 focus:border-blue-500 text-center uppercase font-bold text-blue-200">
+      <!-- 1. DAFTAR TUNGGU (QUEUE) -->
+      <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600">
+        <h2 class="font-bold text-emerald-400 border-b border-slate-600 pb-2 mb-3">1. Persiapan / Daftar Tunggu</h2>
+        <div class="flex flex-col gap-2 text-sm mb-3">
+          <input type="text" id="q-kat" placeholder="Kategori (Msl: 10K Putra)" class="bg-slate-900 p-2 rounded outline-none border border-slate-700 focus:border-emerald-500">
+          
+          <div class="grid grid-cols-2 gap-2 bg-slate-800 p-2 rounded border border-slate-700">
+            <input type="text" id="q-j3-no" placeholder="No. Dada J3" class="bg-slate-900 p-2 rounded border border-slate-600">
+            <input type="text" id="q-j3-nama" placeholder="Nama J3" class="bg-slate-900 p-2 rounded border border-slate-600">
+          </div>
+          <div class="grid grid-cols-2 gap-2 bg-slate-800 p-2 rounded border border-slate-700">
+            <input type="text" id="q-j2-no" placeholder="No. Dada J2" class="bg-slate-900 p-2 rounded border border-slate-600">
+            <input type="text" id="q-j2-nama" placeholder="Nama J2" class="bg-slate-900 p-2 rounded border border-slate-600">
+          </div>
+          <div class="grid grid-cols-2 gap-2 bg-slate-800 p-2 rounded border border-yellow-600/50">
+            <input type="text" id="q-j1-no" placeholder="No. Dada J1" class="bg-slate-900 p-2 rounded border border-yellow-600/50 text-yellow-400 font-bold">
+            <input type="text" id="q-j1-nama" placeholder="Nama J1" class="bg-slate-900 p-2 rounded border border-yellow-600/50 text-yellow-400 font-bold">
+          </div>
+
+          <button onclick="addToQueue()" class="bg-slate-600 hover:bg-slate-500 py-2 rounded font-bold mt-1 text-xs">➕ Tambah ke Antrean</button>
         </div>
-        
-        <div><label class="text-xs text-amber-500 font-bold">JUARA 3</label><input type="text" id="j3" placeholder="Nama / Nomor" class="w-full bg-slate-700 p-2 rounded outline-none border border-slate-600 focus:border-blue-500"></div>
-        <div><label class="text-xs text-slate-300 font-bold">JUARA 2</label><input type="text" id="j2" placeholder="Nama / Nomor" class="w-full bg-slate-700 p-2 rounded outline-none border border-slate-600 focus:border-blue-500"></div>
-        <div><label class="text-xs text-yellow-400 font-bold">JUARA 1</label><input type="text" id="j1" placeholder="Nama / Nomor" class="w-full bg-slate-700 p-2 rounded outline-none border border-slate-600 focus:border-blue-500"></div>
+        <ul id="queue-list" class="space-y-2 max-h-32 overflow-y-auto pr-2"></ul>
       </div>
 
-      <!-- TOMBOL KONTROL -->
-      <div class="grid grid-cols-2 gap-2 mt-2">
-        <button onclick="sendToLive('show-j3')" class="bg-amber-600 hover:bg-amber-500 p-3 rounded font-bold">Tampil J3</button>
-        <button onclick="sendToLive('show-j2')" class="bg-slate-300 hover:bg-white text-slate-900 p-3 rounded font-bold">Tampil J2</button>
-        <button onclick="sendToLive('show-j1')" class="bg-yellow-500 hover:bg-yellow-400 text-black p-3 rounded font-bold col-span-2">🏆 Tampil JUARA 1</button>
-        <button onclick="sendToLive('show-all')" class="bg-blue-600 hover:bg-blue-500 p-3 rounded font-bold col-span-2 mt-2">🌟 Tampilkan Semua (Podium)</button>
-        <button onclick="sendToLive('clear')" class="bg-red-600 hover:bg-red-500 p-3 rounded font-bold col-span-2 mt-2">✖ Bersihkan Layar</button>
+      <!-- 2. KONTROL AKTIF (STANDBY) -->
+      <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600">
+        <h2 class="font-bold text-blue-400 border-b border-slate-600 pb-2 mb-3">2. Panel Standby (Siap Tayang)</h2>
+        <div class="space-y-3 mb-4">
+          <input type="text" id="kategori" oninput="updateStandbyPreview()" placeholder="KATEGORI TAYANG" class="w-full bg-slate-900 p-2 rounded text-center font-bold text-blue-300 border border-slate-600">
+          
+          <div class="grid grid-cols-3 gap-2">
+            <div class="space-y-1">
+              <label class="text-[10px] text-amber-500 font-bold block">JUARA 3</label>
+              <input type="text" id="j3-no" oninput="updateStandbyPreview()" placeholder="Nomor" class="w-full bg-slate-900 p-2 rounded border border-slate-600 text-sm">
+              <input type="text" id="j3-nama" oninput="updateStandbyPreview()" placeholder="Nama" class="w-full bg-slate-900 p-2 rounded border border-slate-600 text-sm font-bold">
+            </div>
+            <div class="space-y-1">
+              <label class="text-[10px] text-yellow-400 font-bold block">JUARA 1</label>
+              <input type="text" id="j1-no" oninput="updateStandbyPreview()" placeholder="Nomor" class="w-full bg-slate-900 p-2 rounded border border-yellow-500/50 text-sm">
+              <input type="text" id="j1-nama" oninput="updateStandbyPreview()" placeholder="Nama" class="w-full bg-slate-900 p-2 rounded border border-yellow-500/50 text-sm font-bold text-yellow-400">
+            </div>
+            <div class="space-y-1">
+              <label class="text-[10px] text-slate-300 font-bold block">JUARA 2</label>
+              <input type="text" id="j2-no" oninput="updateStandbyPreview()" placeholder="Nomor" class="w-full bg-slate-900 p-2 rounded border border-slate-600 text-sm">
+              <input type="text" id="j2-nama" oninput="updateStandbyPreview()" placeholder="Nama" class="w-full bg-slate-900 p-2 rounded border border-slate-600 text-sm font-bold">
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-2">
+          <button onclick="sendToLive('show-j3')" class="bg-amber-700 hover:bg-amber-600 p-2 rounded font-bold text-xs">Tayang J3 ➔</button>
+          <button onclick="sendToLive('show-j1')" class="bg-yellow-600 hover:bg-yellow-500 text-black p-2 rounded font-bold text-xs">Tayang J1 ➔</button>
+          <button onclick="sendToLive('show-j2')" class="bg-slate-400 hover:bg-slate-300 text-black p-2 rounded font-bold text-xs">Tayang J2 ➔</button>
+          
+          <button onclick="sendToLive('show-all')" class="bg-blue-600 hover:bg-blue-500 py-3 rounded font-bold col-span-3 mt-2 shadow-lg">🌟 TAYANGKAN SEMUA (PODIUM) ➔</button>
+          <button onclick="sendToLive('clear')" class="bg-red-600 hover:bg-red-500 py-2 rounded font-bold col-span-3 mt-1 text-sm">✖ Bersihkan Layar (Clear)</button>
+        </div>
       </div>
 
-      <!-- TAB VISUAL -->
-      <h2 class="font-bold text-emerald-400 border-b border-slate-700 pb-2 mt-4">2. Kustomisasi Layar</h2>
-      <div class="space-y-4 text-sm pb-10">
+      <!-- 3. KUSTOMISASI VISUAL -->
+      <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600 pb-8">
+        <h2 class="font-bold text-fuchsia-400 border-b border-slate-600 pb-2 mb-3">3. Kustomisasi Layar LED</h2>
         
-        <div><label class="block mb-1 text-slate-300">Background (Video/Gambar)</label><input type="file" id="bg-file" accept="video/*, image/*" onchange="updateVisuals()" class="w-full bg-slate-700 p-1 rounded"></div>
-        <div>
-          <label class="block mb-1 text-slate-300">Jenis Font (Nama)</label>
-          <select id="font-family" onchange="updateVisuals()" class="w-full bg-slate-700 p-2 rounded outline-none">
-            <option value="'Segoe UI', Tahoma, Geneva, Verdana, sans-serif">Default (Modern)</option>
-            <option value="Impact, fantasy">Impact (Tebal & Padat)</option>
-            <option value="'Arial Black', Gadget, sans-serif">Arial Black (Tebal Lebar)</option>
-            <option value="'Courier New', Courier, monospace">Courier (Digital/Retro)</option>
-          </select>
+        <div class="grid grid-cols-3 gap-3 mb-4">
+          <div><label class="text-xs block mb-1">Warna Box J3</label><input type="color" id="col-j3" value="#d97706" oninput="updateVisuals()" class="w-full h-8 cursor-pointer rounded"></div>
+          <div><label class="text-xs block mb-1">Warna Box J1</label><input type="color" id="col-j1" value="#eab308" oninput="updateVisuals()" class="w-full h-8 cursor-pointer rounded"></div>
+          <div><label class="text-xs block mb-1">Warna Box J2</label><input type="color" id="col-j2" value="#64748b" oninput="updateVisuals()" class="w-full h-8 cursor-pointer rounded"></div>
         </div>
-        <div><label class="block mb-1 text-slate-300">Ukuran Font Nama</label><input type="range" id="font-size" min="100" max="300" value="150" oninput="updateVisuals()" class="w-full"></div>
-        <div><label class="block mb-1 text-slate-300">Ukuran Kotak</label><input type="range" id="box-scale" min="50" max="150" value="100" oninput="updateVisuals()" class="w-full"></div>
-        <div><label class="block mb-1 text-slate-300">Posisi Kotak (Atas/Bawah)</label><input type="range" id="box-y" min="-500" max="500" value="0" oninput="updateVisuals()" class="w-full"></div>
+
+        <div class="space-y-4 text-xs">
+          <div><label class="block mb-1">Ukuran Tulisan "JUARA"</label><input type="range" id="title-size" min="50" max="250" value="100" oninput="updateVisuals()" class="w-full"></div>
+          <div><label class="block mb-1 text-blue-300 font-bold">Ukuran NOMOR Dada</label><input type="range" id="no-size" min="50" max="300" value="120" oninput="updateVisuals()" class="w-full"></div>
+          <div><label class="block mb-1 text-emerald-300 font-bold">Ukuran NAMA Pemenang</label><input type="range" id="font-size" min="50" max="300" value="150" oninput="updateVisuals()" class="w-full"></div>
+          <div><label class="block mb-1">Posisi Kotak (Geser Atas/Bawah)</label><input type="range" id="box-y" min="-500" max="500" value="0" oninput="updateVisuals()" class="w-full"></div>
+          <div><label class="block mb-1">Background (Video/Gambar)</label><input type="file" id="bg-file" accept="video/*, image/*" onchange="updateVisuals()" class="w-full bg-slate-900 p-1 rounded"></div>
+        </div>
       </div>
+
     </div>
 
     <!-- PANEL KANAN -->
-    <div class="w-2/3 bg-slate-800 p-3 rounded-xl shadow-xl flex flex-col border border-slate-600">
-      <h2 class="font-bold text-xs text-red-400 mb-2 animate-pulse">🔴 STATUS LAYAR LED</h2>
-      <div class="w-full h-full bg-black rounded border border-slate-700 flex flex-col items-center justify-center text-center p-10">
-        <h1 class="text-4xl text-slate-700 font-bold">CEK TAMPILAN DI LAYAR 2</h1>
-        <p class="text-slate-500 mt-2">Semua pengaturan visual akan langsung berubah secara real-time di layar LED (Layar 2).</p>
+    <div class="w-[55%] flex flex-col gap-4 overflow-y-auto pr-2 pb-6">
+      
+      <!-- MONITOR 1: STANDBY -->
+      <div class="bg-slate-800 p-3 rounded-xl shadow-xl border border-slate-600 flex flex-col shrink-0">
+        <h2 class="font-bold text-xs text-blue-400 mb-2 flex items-center"><span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse mr-2"></span> PREVIEW STANDBY (16:9)</h2>
+        <div class="w-full aspect-video bg-black rounded border-2 border-dashed border-slate-600 relative overflow-hidden flex flex-col items-center justify-center p-4">
+          <p id="prev-kat" class="text-[10px] font-bold text-white mb-2 uppercase tracking-widest bg-blue-900/80 px-4 py-1 rounded-full hidden">KATEGORI</p>
+          <div class="grid grid-cols-3 gap-2 w-full text-center items-end">
+            <div class="bg-amber-700/50 p-2 rounded border border-amber-600/30">
+              <p class="text-[9px] text-amber-400 font-bold">JUARA 3</p>
+              <p id="prev-j3-no" class="text-xs text-white/80 font-mono mt-1">-</p>
+              <p id="prev-j3-nama" class="text-sm font-bold text-white truncate">-</p>
+            </div>
+            <div class="bg-yellow-600/50 p-3 rounded border-2 border-yellow-500 z-10 shadow-lg">
+              <p class="text-[10px] text-yellow-400 font-bold">JUARA 1</p>
+              <p id="prev-j1-no" class="text-sm text-white/90 font-mono mt-1">-</p>
+              <p id="prev-j1-nama" class="text-lg font-black text-white truncate">-</p>
+            </div>
+            <div class="bg-slate-600/50 p-2 rounded border border-slate-500/30">
+              <p class="text-[9px] text-slate-300 font-bold">JUARA 2</p>
+              <p id="prev-j2-no" class="text-xs text-white/80 font-mono mt-1">-</p>
+              <p id="prev-j2-nama" class="text-sm font-bold text-white truncate">-</p>
+            </div>
+          </div>
+        </div>
       </div>
+
+      <!-- MONITOR 2: LIVE -->
+      <div class="bg-slate-800 p-3 rounded-xl shadow-xl border-2 border-red-900 flex flex-col shrink-0">
+        <h2 class="font-bold text-xs text-red-400 mb-2 flex items-center"><span class="w-2 h-2 rounded-full bg-red-500 animate-pulse mr-2"></span> LIVE OUTPUT LAYAR 2 (16:9)</h2>
+        <div class="w-full aspect-video bg-black rounded border border-slate-700 relative overflow-hidden flex flex-col items-center justify-center p-4" id="live-container">
+          <p class="text-slate-600 text-sm font-bold">Layar Kosong (Standby)</p>
+        </div>
+      </div>
+
     </div>
   </div>
 
   <script>
     const { ipcRenderer } = require('electron');
 
+    let queue = [];
+    function addToQueue() {
+      const k = document.getElementById('q-kat').value;
+      const j1no = document.getElementById('q-j1-no').value;
+      const j1nama = document.getElementById('q-j1-nama').value;
+      const j2no = document.getElementById('q-j2-no').value;
+      const j2nama = document.getElementById('q-j2-nama').value;
+      const j3no = document.getElementById('q-j3-no').value;
+      const j3nama = document.getElementById('q-j3-nama').value;
+      
+      if(!k && !j1nama && !j2nama && !j3nama) return; 
+      queue.push({k, j1no, j1nama, j2no, j2nama, j3no, j3nama});
+      
+      document.getElementById('q-kat').value = '';
+      document.getElementById('q-j1-no').value = ''; document.getElementById('q-j1-nama').value = '';
+      document.getElementById('q-j2-no').value = ''; document.getElementById('q-j2-nama').value = '';
+      document.getElementById('q-j3-no').value = ''; document.getElementById('q-j3-nama').value = '';
+      renderQueue();
+    }
+
+    function renderQueue() {
+      const list = document.getElementById('queue-list');
+      list.innerHTML = '';
+      queue.forEach((q, idx) => {
+        list.innerHTML += `
+          <li class="bg-slate-900 p-2 rounded text-xs flex justify-between items-center border border-slate-700">
+            <div class="truncate pr-2">
+              <span class="font-bold text-emerald-400">${q.k || 'Tanpa Kategori'}</span><br>
+              <span class="text-slate-400">1: ${q.j1nama} | 2: ${q.j2nama} | 3: ${q.j3nama}</span>
+            </div>
+            <button onclick="loadFromQueue(${idx})" class="bg-blue-600 hover:bg-blue-500 px-3 py-1 rounded font-bold shrink-0">Load</button>
+          </li>
+        `;
+      });
+    }
+
+    function loadFromQueue(idx) {
+      const q = queue[idx];
+      document.getElementById('kategori').value = q.k;
+      document.getElementById('j1-no').value = q.j1no; document.getElementById('j1-nama').value = q.j1nama;
+      document.getElementById('j2-no').value = q.j2no; document.getElementById('j2-nama').value = q.j2nama;
+      document.getElementById('j3-no').value = q.j3no; document.getElementById('j3-nama').value = q.j3nama;
+      updateStandbyPreview();
+    }
+
+    function updateStandbyPreview() {
+      const kat = document.getElementById('kategori').value;
+      const elKat = document.getElementById('prev-kat');
+      if(kat) { elKat.innerText = kat; elKat.classList.remove('hidden'); } 
+      else { elKat.classList.add('hidden'); }
+
+      document.getElementById('prev-j1-no').innerText = document.getElementById('j1-no').value || '-';
+      document.getElementById('prev-j1-nama').innerText = document.getElementById('j1-nama').value || '-';
+      document.getElementById('prev-j2-no').innerText = document.getElementById('j2-no').value || '-';
+      document.getElementById('prev-j2-nama').innerText = document.getElementById('j2-nama').value || '-';
+      document.getElementById('prev-j3-no').innerText = document.getElementById('j3-no').value || '-';
+      document.getElementById('prev-j3-nama').innerText = document.getElementById('j3-nama').value || '-';
+    }
+
     function openLedWindow() { ipcRenderer.send('open-led'); }
 
     function sendToLive(action) {
-      const data = {
-        action: action,
-        kategori: document.getElementById('kategori').value || '', // Mengambil data kategori
-        j1: document.getElementById('j1').value || '-',
-        j2: document.getElementById('j2').value || '-',
-        j3: document.getElementById('j3').value || '-',
+      const kat = document.getElementById('kategori').value || '';
+      const dataLive = {
+        action: action, kategori: kat,
+        j1no: document.getElementById('j1-no').value || '-',
+        j1nama: document.getElementById('j1-nama').value || '-',
+        j2no: document.getElementById('j2-no').value || '-',
+        j2nama: document.getElementById('j2-nama').value || '-',
+        j3no: document.getElementById('j3-no').value || '-',
+        j3nama: document.getElementById('j3-nama').value || '-'
       };
-      ipcRenderer.send('send-to-led', data);
+      
+      const liveDiv = document.getElementById('live-container');
+      if(action === 'clear') {
+        liveDiv.innerHTML = '<p class="text-slate-600 text-sm font-bold">Layar Kosong (Standby)</p>';
+      } else if (action === 'show-all') {
+        let katHtml = kat ? `<p class="text-[10px] font-bold text-white mb-2 uppercase bg-red-900/80 px-3 py-1 rounded-full">${kat}</p>` : '';
+        liveDiv.innerHTML = `${katHtml}
+          <div class="grid grid-cols-3 gap-2 w-full text-center items-end">
+            <div class="bg-amber-700 p-2 rounded"><p class="text-[9px] text-amber-200">JUARA 3</p><p class="text-xs text-white/80">${dataLive.j3no}</p><p class="text-sm font-bold truncate text-white">${dataLive.j3nama}</p></div>
+            <div class="bg-yellow-600 p-3 rounded border-2 border-yellow-400"><p class="text-[10px] text-yellow-200 font-bold">JUARA 1</p><p class="text-sm text-white/90">${dataLive.j1no}</p><p class="text-lg font-black truncate text-white">${dataLive.j1nama}</p></div>
+            <div class="bg-slate-600 p-2 rounded"><p class="text-[9px] text-slate-200">JUARA 2</p><p class="text-xs text-white/80">${dataLive.j2no}</p><p class="text-sm font-bold truncate text-white">${dataLive.j2nama}</p></div>
+          </div>`;
+      } else {
+        let title = action === 'show-j1' ? 'JUARA 1' : (action === 'show-j2' ? 'JUARA 2' : 'JUARA 3');
+        let no = action === 'show-j1' ? dataLive.j1no : (action === 'show-j2' ? dataLive.j2no : dataLive.j3no);
+        let nama = action === 'show-j1' ? dataLive.j1nama : (action === 'show-j2' ? dataLive.j2nama : dataLive.j3nama);
+        let katHtml = kat ? `<p class="text-[10px] font-bold text-white mb-2 uppercase">${kat}</p>` : '';
+        liveDiv.innerHTML = `${katHtml}<div class="bg-blue-900 p-4 rounded text-center border border-blue-500 w-3/4"><p class="text-xs text-blue-300 font-bold mb-1">${title}</p><p class="text-sm text-white/80">${no}</p><p class="text-2xl font-black text-white truncate">${nama}</p></div>`;
+      }
+
+      ipcRenderer.send('send-to-led', dataLive);
       setTimeout(updateVisuals, 100); 
     }
 
     function updateVisuals() {
       const fileInput = document.getElementById('bg-file');
-      let bgPath = null;
-      let bgType = null;
-
+      let bgPath = null; let bgType = null;
       if (fileInput.files.length > 0) {
-        bgPath = fileInput.files[0].path; 
-        bgType = fileInput.files[0].type;
+        bgPath = fileInput.files[0].path; bgType = fileInput.files[0].type;
       }
-
       ipcRenderer.send('send-to-led', {
         action: 'update-visuals',
         bgPath: bgPath, bgType: bgType,
-        fontFamily: document.getElementById('font-family').value,
+        noSize: document.getElementById('no-size').value + '%',
         fontSize: document.getElementById('font-size').value + '%',
-        boxScale: document.getElementById('box-scale').value / 100, 
-        boxY: document.getElementById('box-y').value + 'px'
+        titleSize: document.getElementById('title-size').value + '%',
+        boxY: document.getElementById('box-y').value + 'px',
+        colJ1: document.getElementById('col-j1').value,
+        colJ2: document.getElementById('col-j2').value,
+        colJ3: document.getElementById('col-j3').value
       });
     }
   </script>
