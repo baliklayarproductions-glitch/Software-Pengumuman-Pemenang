@@ -11,25 +11,31 @@
   <header class="flex justify-between items-center mb-4 pb-3 border-b border-slate-700">
     <div class="flex items-center gap-3">
       <div class="w-10 h-10 bg-blue-600 rounded flex items-center justify-center font-bold text-xl"><span class="text-white">P</span><span class="text-blue-200">P</span></div>
-      <h1 class="text-xl font-bold">Pengumuman Pemenang <span class="text-xs text-emerald-400">v2.0 Pro</span></h1>
+      <h1 class="text-xl font-bold">Pengumuman Pemenang <span class="text-xs text-emerald-400">v2.1 Pro</span></h1>
     </div>
     <button onclick="openLedWindow()" class="bg-emerald-600 hover:bg-emerald-500 px-4 py-2 rounded text-sm font-bold shadow-lg">🖥️ BUKA LAYAR 2 (LED)</button>
   </header>
 
   <div class="flex gap-4 flex-1 h-full overflow-hidden">
-    <!-- PANEL KIRI (Scrollable) -->
+    <!-- PANEL KIRI -->
     <div class="w-1/3 bg-slate-800 p-4 rounded-xl shadow-xl flex flex-col gap-4 overflow-y-auto">
       
       <!-- TAB DATA -->
       <h2 class="font-bold text-blue-400 border-b border-slate-700 pb-2">1. Input Data Pemenang</h2>
       <div class="space-y-3">
+        <!-- INPUT KATEGORI BARU -->
+        <div>
+          <label class="text-xs text-blue-300 font-bold">KATEGORI LOMBA</label>
+          <input type="text" id="kategori" placeholder="Contoh: 10K PUTRA / UMUM" class="w-full bg-slate-700 p-2 rounded outline-none border border-slate-600 focus:border-blue-500 text-center uppercase font-bold text-blue-200">
+        </div>
+        
         <div><label class="text-xs text-amber-500 font-bold">JUARA 3</label><input type="text" id="j3" placeholder="Nama / Nomor" class="w-full bg-slate-700 p-2 rounded outline-none border border-slate-600 focus:border-blue-500"></div>
         <div><label class="text-xs text-slate-300 font-bold">JUARA 2</label><input type="text" id="j2" placeholder="Nama / Nomor" class="w-full bg-slate-700 p-2 rounded outline-none border border-slate-600 focus:border-blue-500"></div>
         <div><label class="text-xs text-yellow-400 font-bold">JUARA 1</label><input type="text" id="j1" placeholder="Nama / Nomor" class="w-full bg-slate-700 p-2 rounded outline-none border border-slate-600 focus:border-blue-500"></div>
       </div>
 
       <!-- TOMBOL KONTROL -->
-      <div class="grid grid-cols-2 gap-2">
+      <div class="grid grid-cols-2 gap-2 mt-2">
         <button onclick="sendToLive('show-j3')" class="bg-amber-600 hover:bg-amber-500 p-3 rounded font-bold">Tampil J3</button>
         <button onclick="sendToLive('show-j2')" class="bg-slate-300 hover:bg-white text-slate-900 p-3 rounded font-bold">Tampil J2</button>
         <button onclick="sendToLive('show-j1')" class="bg-yellow-500 hover:bg-yellow-400 text-black p-3 rounded font-bold col-span-2">🏆 Tampil JUARA 1</button>
@@ -39,13 +45,9 @@
 
       <!-- TAB VISUAL -->
       <h2 class="font-bold text-emerald-400 border-b border-slate-700 pb-2 mt-4">2. Kustomisasi Layar</h2>
-      <div class="space-y-4 text-sm">
+      <div class="space-y-4 text-sm pb-10">
         
-        <div>
-          <label class="block mb-1 text-slate-300">Background (Video / Gambar)</label>
-          <input type="file" id="bg-file" accept="video/*, image/*" onchange="updateVisuals()" class="w-full bg-slate-700 p-1 rounded">
-        </div>
-        
+        <div><label class="block mb-1 text-slate-300">Background (Video/Gambar)</label><input type="file" id="bg-file" accept="video/*, image/*" onchange="updateVisuals()" class="w-full bg-slate-700 p-1 rounded"></div>
         <div>
           <label class="block mb-1 text-slate-300">Jenis Font (Nama)</label>
           <select id="font-family" onchange="updateVisuals()" class="w-full bg-slate-700 p-2 rounded outline-none">
@@ -55,29 +57,16 @@
             <option value="'Courier New', Courier, monospace">Courier (Digital/Retro)</option>
           </select>
         </div>
-
-        <div>
-          <label class="block mb-1 text-slate-300">Ukuran Font Nama</label>
-          <input type="range" id="font-size" min="100" max="300" value="150" oninput="updateVisuals()" class="w-full">
-        </div>
-
-        <div>
-          <label class="block mb-1 text-slate-300">Ukuran Kotak (Besar/Kecil)</label>
-          <input type="range" id="box-scale" min="50" max="150" value="100" oninput="updateVisuals()" class="w-full">
-        </div>
-
-        <div>
-          <label class="block mb-1 text-slate-300">Posisi Kotak (Atas/Bawah)</label>
-          <input type="range" id="box-y" min="-500" max="500" value="0" oninput="updateVisuals()" class="w-full">
-        </div>
-
+        <div><label class="block mb-1 text-slate-300">Ukuran Font Nama</label><input type="range" id="font-size" min="100" max="300" value="150" oninput="updateVisuals()" class="w-full"></div>
+        <div><label class="block mb-1 text-slate-300">Ukuran Kotak</label><input type="range" id="box-scale" min="50" max="150" value="100" oninput="updateVisuals()" class="w-full"></div>
+        <div><label class="block mb-1 text-slate-300">Posisi Kotak (Atas/Bawah)</label><input type="range" id="box-y" min="-500" max="500" value="0" oninput="updateVisuals()" class="w-full"></div>
       </div>
     </div>
 
-    <!-- PANEL KANAN (Hanya Status & Live Output Monitor) -->
+    <!-- PANEL KANAN -->
     <div class="w-2/3 bg-slate-800 p-3 rounded-xl shadow-xl flex flex-col border border-slate-600">
       <h2 class="font-bold text-xs text-red-400 mb-2 animate-pulse">🔴 STATUS LAYAR LED</h2>
-      <div class="w-full h-full bg-black rounded border border-slate-700 flex flex-col items-center justify-center text-center">
+      <div class="w-full h-full bg-black rounded border border-slate-700 flex flex-col items-center justify-center text-center p-10">
         <h1 class="text-4xl text-slate-700 font-bold">CEK TAMPILAN DI LAYAR 2</h1>
         <p class="text-slate-500 mt-2">Semua pengaturan visual akan langsung berubah secara real-time di layar LED (Layar 2).</p>
       </div>
@@ -89,42 +78,36 @@
 
     function openLedWindow() { ipcRenderer.send('open-led'); }
 
-    // Fungsi Utama Mengirim Data Teks
     function sendToLive(action) {
       const data = {
         action: action,
+        kategori: document.getElementById('kategori').value || '', // Mengambil data kategori
         j1: document.getElementById('j1').value || '-',
         j2: document.getElementById('j2').value || '-',
         j3: document.getElementById('j3').value || '-',
       };
       ipcRenderer.send('send-to-led', data);
-      
-      // Paksa update visual setiap kali animasi di-trigger
       setTimeout(updateVisuals, 100); 
     }
 
-    // Fungsi Mengirim Data Visual (Realtime)
     function updateVisuals() {
       const fileInput = document.getElementById('bg-file');
       let bgPath = null;
       let bgType = null;
 
       if (fileInput.files.length > 0) {
-        bgPath = fileInput.files[0].path; // Mengambil path asli dari hardisk
+        bgPath = fileInput.files[0].path; 
         bgType = fileInput.files[0].type;
       }
 
-      const visualData = {
+      ipcRenderer.send('send-to-led', {
         action: 'update-visuals',
-        bgPath: bgPath,
-        bgType: bgType,
+        bgPath: bgPath, bgType: bgType,
         fontFamily: document.getElementById('font-family').value,
         fontSize: document.getElementById('font-size').value + '%',
-        boxScale: document.getElementById('box-scale').value / 100, // Format desimal (0.5 - 1.5)
+        boxScale: document.getElementById('box-scale').value / 100, 
         boxY: document.getElementById('box-y').value + 'px'
-      };
-
-      ipcRenderer.send('send-to-led', visualData);
+      });
     }
   </script>
 </body>
