@@ -5,74 +5,44 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     :root {
-      --pos-y: 0px;
-      --box-scale: 1;
-      --box-pad: 48px;
-      
-      --font-main: 60px;
-      --font-kat: 24px;
-      
-      --font-nama: 150%;
-      --font-no: 120%;
-      --font-title: 100%;
-      
-      --col-j1: #eab308; 
-      --col-j2: #64748b; 
-      --col-j3: #d97706; 
+      --pos-y: 0px; --box-scale: 1; --box-pad: 48px;
+      --font-main: 60px; --font-kat: 24px;
+      --font-nama: 150%; --font-no: 120%; --font-title: 100%;
+      --col-j1: #eab308; --col-j2: #64748b; --col-j3: #d97706; 
     }
-
     .aspect-16-9-wrapper {
       position: relative; width: 100vw; height: 56.25vw; 
       max-height: 100vh; max-width: 177.77vh; 
       margin: auto; overflow: hidden; background-color: #000;
     }
-
     .anim-container {
-      opacity: 0; 
-      transform: translateY(50px) scale(var(--box-scale));
+      opacity: 0; transform: translateY(50px) scale(var(--box-scale));
       transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
       position: absolute; width: 100%; height: 100%;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
     }
-    .show { 
-      opacity: 1; 
-      transform: translateY(var(--pos-y)) scale(var(--box-scale)); 
-      z-index: 10; 
-    }
-
+    .show { opacity: 1; transform: translateY(var(--pos-y)) scale(var(--box-scale)); z-index: 10; }
     #main-title { font-size: var(--font-main); line-height: 1.1; }
     .title-category { font-size: var(--font-kat); line-height: 1.2; }
-    
     .dynamic-title { font-size: var(--font-title); font-family: 'Segoe UI', sans-serif; font-weight: 900;}
     .dynamic-no { font-size: var(--font-no); font-family: 'Courier New', monospace; font-weight: 700; line-height: 1.2;}
     .dynamic-name { font-size: var(--font-nama); word-break: break-word; line-height: 1.1; font-family: 'Segoe UI', sans-serif;}
-    
     .bg-media { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -10; }
-    
-    /* Box padding dikontrol dari --box-pad */
     .box-custom {
-      border: 3px solid rgba(255,255,255,0.4);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      backdrop-filter: blur(8px);
-      border-radius: 1.5rem;
+      border: 3px solid rgba(255,255,255,0.4); box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      backdrop-filter: blur(8px); border-radius: 1.5rem;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      padding-top: var(--box-pad);
-      padding-bottom: var(--box-pad);
-      padding-left: 2rem;
-      padding-right: 2rem;
+      padding: var(--box-pad) 2rem;
     }
   </style>
 </head>
 <body class="m-0 bg-black w-screen h-screen flex items-center justify-center overflow-hidden">
   
   <div class="aspect-16-9-wrapper">
-    
-    <!-- Latar Belakang -->
     <video id="bg-video" autoplay loop muted class="bg-media hidden"></video>
     <img id="bg-image" class="bg-media hidden" />
     <div id="bg-fallback" class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-900 to-black -z-20"></div>
 
-    <!-- BOX INDIVIDUAL -->
     <div id="box-single" class="anim-container px-10 hidden">
       <h3 id="single-category" class="title-category font-bold text-white mb-6 uppercase tracking-[0.2em] bg-black/60 px-8 py-2 rounded-full border border-white/20 hidden">KATEGORI</h3>
       <div id="single-card" class="box-custom w-full max-w-4xl text-center" style="background-color: var(--col-j1);">
@@ -82,9 +52,7 @@
       </div>
     </div>
 
-    <!-- BOX SEMUA JUARA -->
     <div id="box-all" class="anim-container w-full px-8 hidden">
-      <!-- SUSUNAN TEKS DIPERBAIKI: PEMENANG DI ATAS, KATEGORI DI BAWAHNYA -->
       <h1 id="main-title" class="font-black text-white mb-4 tracking-widest uppercase drop-shadow-[0_5px_5px_rgba(0,0,0,0.8)]">PEMENANG LOMBA</h1>
       <h3 id="all-category" class="title-category font-bold text-white mb-8 uppercase tracking-[0.2em] bg-black/60 px-8 py-2 rounded-full border border-white/20 hidden">KATEGORI</h3>
       
@@ -110,43 +78,47 @@
 
   <script>
     const { ipcRenderer } = require('electron');
+    const url = require('url'); // MENGGUNAKAN NATIVE NODE.JS UNTUK FIX PATH WINDOWS
+    
     const root = document.documentElement;
     const boxAll = document.getElementById('box-all');
     const boxSingle = document.getElementById('box-single');
 
     ipcRenderer.on('update-led', (event, data) => {
       if(data.action === 'update-visuals') {
-        root.style.setProperty('--pos-y', data.boxY);
-        root.style.setProperty('--box-scale', data.boxScale);
-        root.style.setProperty('--box-pad', data.boxPad);
-        root.style.setProperty('--font-main', data.sizeMain);
-        root.style.setProperty('--font-kat', data.sizeKat);
-        root.style.setProperty('--font-nama', data.fontSize);
-        root.style.setProperty('--font-no', data.noSize);
-        root.style.setProperty('--font-title', data.titleSize);
-        root.style.setProperty('--col-j1', data.colJ1);
-        root.style.setProperty('--col-j2', data.colJ2);
+        root.style.setProperty('--pos-y', data.boxY); root.style.setProperty('--box-scale', data.boxScale);
+        root.style.setProperty('--box-pad', data.boxPad); root.style.setProperty('--font-main', data.sizeMain);
+        root.style.setProperty('--font-kat', data.sizeKat); root.style.setProperty('--font-nama', data.fontSize);
+        root.style.setProperty('--font-no', data.noSize); root.style.setProperty('--font-title', data.titleSize);
+        root.style.setProperty('--col-j1', data.colJ1); root.style.setProperty('--col-j2', data.colJ2);
         root.style.setProperty('--col-j3', data.colJ3);
 
+        const videoEl = document.getElementById('bg-video');
+        const imageEl = document.getElementById('bg-image');
+        const fallback = document.getElementById('bg-fallback');
+
         if(data.bgPath) {
-          const videoEl = document.getElementById('bg-video');
-          const imageEl = document.getElementById('bg-image');
-          document.getElementById('bg-fallback').classList.add('hidden');
-          
-          // PROTOKOL KUSTOM AGAR BISA JALAN DI .EXE
-          const safeURI = 'local-media://' + data.bgPath.replace(/\\/g, '/');
+          fallback.classList.add('hidden');
+          // KONVERSI PATH SEKALIGUS FIX 100% MASALAH GAMBAR/VIDEO
+          const safeURI = url.pathToFileURL(data.bgPath).href;
 
           if (data.bgType && data.bgType.startsWith('video/')) {
             imageEl.classList.add('hidden');
             videoEl.src = safeURI;
             videoEl.classList.remove('hidden'); 
-            videoEl.play().catch(e => console.log("Play error", e));
+            videoEl.load(); // Paksa muat
+            videoEl.play().catch(e => console.log("Video Play Error:", e));
           } else {
             videoEl.classList.add('hidden');
             videoEl.pause();
             imageEl.src = safeURI;
             imageEl.classList.remove('hidden');
           }
+        } else {
+          // Jika background dihapus, kembalikan ke default gradient
+          videoEl.classList.add('hidden'); videoEl.pause();
+          imageEl.classList.add('hidden');
+          fallback.classList.remove('hidden');
         }
         return; 
       }
@@ -159,15 +131,11 @@
 
       setTimeout(() => {
         boxAll.classList.remove('hidden'); boxSingle.classList.remove('hidden');
-
-        const catAll = document.getElementById('all-category');
-        const catSingle = document.getElementById('single-category');
+        const catAll = document.getElementById('all-category'); const catSingle = document.getElementById('single-category');
         if (data.kategori && data.kategori.trim() !== '') {
             catAll.innerText = data.kategori; catSingle.innerText = data.kategori;
             catAll.classList.remove('hidden'); catSingle.classList.remove('hidden');
-        } else {
-            catAll.classList.add('hidden'); catSingle.classList.add('hidden');
-        }
+        } else { catAll.classList.add('hidden'); catSingle.classList.add('hidden'); }
 
         if(data.action === 'show-all') {
           boxSingle.classList.add('hidden');
@@ -179,20 +147,11 @@
           boxAll.classList.add('hidden');
           const singleCard = document.getElementById('single-card');
           if(data.action === 'show-j3') {
-            document.getElementById('single-title').innerText = "JUARA 3";
-            document.getElementById('single-no').innerText = data.j3no;
-            document.getElementById('single-name').innerText = data.j3nama;
-            singleCard.style.backgroundColor = "var(--col-j3)";
+            document.getElementById('single-title').innerText = "JUARA 3"; document.getElementById('single-no').innerText = data.j3no; document.getElementById('single-name').innerText = data.j3nama; singleCard.style.backgroundColor = "var(--col-j3)";
           } else if(data.action === 'show-j2') {
-            document.getElementById('single-title').innerText = "JUARA 2";
-            document.getElementById('single-no').innerText = data.j2no;
-            document.getElementById('single-name').innerText = data.j2nama;
-            singleCard.style.backgroundColor = "var(--col-j2)";
+            document.getElementById('single-title').innerText = "JUARA 2"; document.getElementById('single-no').innerText = data.j2no; document.getElementById('single-name').innerText = data.j2nama; singleCard.style.backgroundColor = "var(--col-j2)";
           } else if(data.action === 'show-j1') {
-            document.getElementById('single-title').innerText = "JUARA 1";
-            document.getElementById('single-no').innerText = data.j1no;
-            document.getElementById('single-name').innerText = data.j1nama;
-            singleCard.style.backgroundColor = "var(--col-j1)";
+            document.getElementById('single-title').innerText = "JUARA 1"; document.getElementById('single-no').innerText = data.j1no; document.getElementById('single-name').innerText = data.j1nama; singleCard.style.backgroundColor = "var(--col-j1)";
           }
           void boxSingle.offsetWidth; boxSingle.classList.add('show');
         }
