@@ -2,21 +2,20 @@
   "name": "pengumuman-pemenang",
   "version": "1.0.0",
   "description": "Software LED Pengumuman Pemenang Lari",
+  "author": "Balik Layar",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
-    "build": "electron-builder build --mac --win"
+    "build": "electron-builder build"
   },
   "build": {
     "appId": "com.studio.pengumumanpemenang",
     "productName": "Software Pengumuman Pemenang",
     "mac": {
-      "target": "dmg",
-      "icon": "build/icon.icns"
+      "target": "dmg"
     },
     "win": {
-      "target": "nsis",
-      "icon": "build/icon.ico"
+      "target": "nsis"
     }
   },
   "dependencies": {
