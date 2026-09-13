@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+  <title>Operator - Software Pengumuman Pemenang</title>
+</head>
+<body class="bg-slate-900 text-white h-screen p-6 font-sans flex flex-col">
+  
+  <!-- Header & Logo -->
+  <header class="flex justify-between items-center mb-6 pb-4 border-b border-slate-700">
+    <div class="flex items-center gap-3">
+      <!-- Logo PP SVG -->
+      <div class="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg font-bold text-2xl tracking-tighter border-2 border-blue-400">
+        <span class="text-white">P</span><span class="text-blue-200 -ml-1">P</span>
+      </div>
+      <div>
+        <h1 class="text-2xl font-bold">Pengumuman Pemenang</h1>
+        <p class="text-slate-400 text-sm">Professional LED Control System</p>
+      </div>
+    </div>
+    <div class="flex gap-4">
+      <button onclick="importExcel()" class="bg-emerald-600 hover:bg-emerald-500 px-4 py-2 rounded-md text-sm font-semibold transition">📄 Import Excel</button>
+    </div>
+  </header>
+
+  <div class="flex gap-6 flex-1">
+    <!-- Panel Kontrol (Kiri) -->
+    <div class="w-1/3 bg-slate-800 p-5 rounded-xl shadow-xl flex flex-col gap-4">
+      <h2 class="font-bold text-lg text-blue-400 border-b border-slate-700 pb-2">Kontrol Animasi & Data</h2>
+      
+      <!-- Input Data Manual -->
+      <div class="space-y-3" id="data-inputs">
+        <input type="text" id="j3" placeholder="Juara 3 (No - Nama)" class="w-full bg-slate-700 p-2 rounded border border-slate-600 focus:border-blue-500 outline-none">
+        <input type="text" id="j2" placeholder="Juara 2 (No - Nama)" class="w-full bg-slate-700 p-2 rounded border border-slate-600 focus:border-blue-500 outline-none">
+        <input type="text" id="j1" placeholder="Juara 1 (No - Nama)" class="w-full bg-slate-700 p-2 rounded border border-slate-600 focus:border-blue-500 outline-none">
+      </div>
+
+      <!-- Tombol Trigger -->
+      <div class="grid grid-cols-2 gap-2 mt-4">
+        <button onclick="sendToLed('show-j3')" class="bg-amber-600 hover:bg-amber-500 p-3 rounded-lg font-bold transition">Tampil Juara 3</button>
+        <button onclick="sendToLed('show-j2')" class="bg-slate-300 hover:bg-white text-slate-900 p-3 rounded-lg font-bold transition">Tampil Juara 2</button>
+        <button onclick="sendToLed('show-j1')" class="bg-yellow-500 hover:bg-yellow-400 text-black p-3 rounded-lg font-bold col-span-2 transition">🏆 Tampil Juara 1</button>
+        <button onclick="sendToLed('show-all')" class="bg-blue-600 hover:bg-blue-500 p-3 rounded-lg font-bold col-span-2 transition mt-2">🌟 Tampilkan Semua (Satu Kotak)</button>
+        <button onclick="sendToLed('clear')" class="bg-red-600 hover:bg-red-500 p-3 rounded-lg font-bold col-span-2 transition mt-2">✖ Bersihkan Layar</button>
+      </div>
+    </div>
+
+    <!-- Panel Monitor Preview (Kanan) -->
+    <div class="w-2/3 flex flex-col gap-4">
+      <div class="bg-slate-800 p-4 rounded-xl shadow-xl flex-1 flex flex-col">
+        <h2 class="font-bold text-sm text-slate-400 mb-2">PREVIEW MONITOR (16:9)</h2>
+        <!-- Rasio 16:9 menggunakan aspect-video -->
+        <div class="w-full aspect-video bg-black rounded-lg border-2 border-slate-700 relative overflow-hidden flex items-center justify-center">
+          <p class="text-slate-600 font-bold text-2xl">LIVE OUTPUT SIMULATION</p>
+          <!-- Simulasi background anti lag -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const { ipcRenderer } = require('electron');
+
+    function sendToLed(action) {
+      const data = {
+        action: action,
+        j3: document.getElementById('j3').value,
+        j2: document.getElementById('j2').value,
+        j1: document.getElementById('j1').value,
+      };
+      ipcRenderer.send('send-to-led', data);
+    }
+
+    // Fungsi File Excel sederhana
+    function importExcel() {
+       alert("Fitur membaca file excel dengan SheetJS terhubung di sini");
+    }
+  </script>
+</body>
+</html>
