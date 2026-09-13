@@ -1,18 +1,21 @@
 const { app, BrowserWindow, screen, ipcMain, protocol } = require('electron');
 const { machineIdSync } = require('node-machine-id');
 
+// HARUS DI DEKLARASIKAN SEBELUM APP READY AGAR VIDEO LOKAL BISA DIPUTAR DI .EXE
+protocol.registerSchemesAsPrivileged([
+  { scheme: 'local-media', privileges: { standard: true, secure: true, supportFetchAPI: true, bypassCSP: true, stream: true } }
+]);
+
 let operatorWindow, ledWindow;
 
 function createOperatorWindow() {
   operatorWindow = new BrowserWindow({
-    width: 1280, height: 800,
-    backgroundColor: '#0f172a',
+    width: 1280, height: 800, backgroundColor: '#0f172a',
     webPreferences: { nodeIntegration: true, contextIsolation: false }
   });
   operatorWindow.loadFile('operator.html');
 }
 
-// SISTEM LISENSI
 ipcMain.handle('get-hwid', () => machineIdSync());
 ipcMain.handle('verify-license', (event, inputKey) => {
   const hwid = machineIdSync();
@@ -20,10 +23,8 @@ ipcMain.handle('verify-license', (event, inputKey) => {
   return inputKey === expectedKey;
 });
 
-// MEMBUKA LAYAR LED
 ipcMain.on('open-led', () => {
   if (ledWindow) return;
-
   const displays = screen.getAllDisplays();
   const externalDisplay = displays.find((display) => display.bounds.x !== 0 || display.bounds.y !== 0);
 
@@ -50,14 +51,11 @@ ipcMain.on('send-to-led', (event, data) => {
 });
 
 app.whenReady().then(() => {
-  // FIX BACKGROUND UNTUK WINDOWS .EXE (Custom Protocol)
+  // Daftarkan Custom Protocol untuk Video/Image Background
   protocol.registerFileProtocol('local-media', (request, callback) => {
     const url = request.url.replace('local-media://', '');
-    try {
-      return callback(decodeURIComponent(url));
-    } catch (error) {
-      console.error(error);
-    }
+    try { return callback(decodeURIComponent(url)); } 
+    catch (error) { console.error(error); }
   });
 
   createOperatorWindow();
