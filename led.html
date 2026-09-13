@@ -10,17 +10,8 @@
       --font-nama: 150%; --font-no: 120%; --font-title: 100%;
       --col-j1: #eab308; --col-j2: #64748b; --col-j3: #d97706; 
     }
-    .aspect-16-9-wrapper {
-      position: relative; width: 100vw; height: 56.25vw; 
-      max-height: 100vh; max-width: 177.77vh; 
-      margin: auto; overflow: hidden; background-color: #000;
-    }
-    .anim-container {
-      opacity: 0; transform: translateY(50px) scale(var(--box-scale));
-      transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-      position: absolute; width: 100%; height: 100%;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-    }
+    .aspect-16-9-wrapper { position: relative; width: 100vw; height: 56.25vw; max-height: 100vh; max-width: 177.77vh; margin: auto; overflow: hidden; background-color: #000; }
+    .anim-container { opacity: 0; transform: translateY(50px) scale(var(--box-scale)); transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); position: absolute; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
     .show { opacity: 1; transform: translateY(var(--pos-y)) scale(var(--box-scale)); z-index: 10; }
     #main-title { font-size: var(--font-main); line-height: 1.1; }
     .title-category { font-size: var(--font-kat); line-height: 1.2; }
@@ -28,13 +19,7 @@
     .dynamic-no { font-size: var(--font-no); font-family: 'Courier New', monospace; font-weight: 700; line-height: 1.2;}
     .dynamic-name { font-size: var(--font-nama); word-break: break-word; line-height: 1.1; font-family: 'Segoe UI', sans-serif;}
     .bg-media { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -10; }
-    
-    .box-custom {
-      border: 3px solid rgba(255,255,255,0.4); box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      backdrop-filter: blur(8px); border-radius: 1.5rem;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      padding: var(--box-pad) 2rem;
-    }
+    .box-custom { border: 3px solid rgba(255,255,255,0.4); box-shadow: 0 10px 30px rgba(0,0,0,0.5); backdrop-filter: blur(8px); border-radius: 1.5rem; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: var(--box-pad) 2rem; }
   </style>
 </head>
 <body class="m-0 bg-black w-screen h-screen flex items-center justify-center overflow-hidden">
@@ -45,6 +30,7 @@
     <div id="bg-fallback" class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-900 to-black -z-20"></div>
 
     <div id="box-single" class="anim-container px-10 hidden">
+      <!-- SUSUNAN YANG BENAR: JUDUL DI ATAS, KATEGORI DI BAWAHNYA -->
       <h1 id="single-title-main" class="font-black text-white mb-4 tracking-widest uppercase drop-shadow-[0_5px_5px_rgba(0,0,0,0.8)]" style="font-size: var(--font-main);">PEMENANG LOMBA</h1>
       <h3 id="single-category" class="title-category font-bold text-white mb-8 uppercase tracking-[0.2em] bg-black/60 px-8 py-2 rounded-full border border-white/20 hidden">KATEGORI</h3>
       
@@ -56,6 +42,7 @@
     </div>
 
     <div id="box-all" class="anim-container w-full px-8 hidden">
+      <!-- SUSUNAN YANG BENAR: JUDUL DI ATAS, KATEGORI DI BAWAHNYA -->
       <h1 id="main-title" class="font-black text-white mb-4 tracking-widest uppercase drop-shadow-[0_5px_5px_rgba(0,0,0,0.8)]">PEMENANG LOMBA</h1>
       <h3 id="all-category" class="title-category font-bold text-white mb-8 uppercase tracking-[0.2em] bg-black/60 px-8 py-2 rounded-full border border-white/20 hidden">KATEGORI</h3>
       
@@ -85,6 +72,13 @@
     const boxAll = document.getElementById('box-all');
     const boxSingle = document.getElementById('box-single');
 
+    function getSafeFileURI(filePath) {
+      if (!filePath) return '';
+      let safePath = filePath.replace(/\\/g, '/');
+      if (!safePath.startsWith('/')) safePath = '/' + safePath;
+      return 'file://' + encodeURI(safePath).replace(/#/g, '%23').replace(/\?/g, '%3F');
+    }
+
     ipcRenderer.on('update-led', (event, data) => {
       if(data.action === 'update-visuals') {
         root.style.setProperty('--pos-y', data.boxY); root.style.setProperty('--box-scale', data.boxScale);
@@ -99,14 +93,12 @@
           const imageEl = document.getElementById('bg-image');
           document.getElementById('bg-fallback').classList.add('hidden');
           
-          // MENGGUNAKAN PROTOCOL YANG SUDAH DIPERBAIKI DI MAIN.JS
-          const safeURI = 'asset://' + data.bgPath;
+          const safeURI = getSafeFileURI(data.bgPath); // PENGGUNAAN PATH MURNI ANTI GAGAL
 
           if (data.bgType && data.bgType.startsWith('video/')) {
             imageEl.classList.add('hidden');
             videoEl.src = safeURI;
             videoEl.classList.remove('hidden'); 
-            videoEl.load();
             videoEl.play().catch(e => console.log("Play error", e));
           } else {
             videoEl.classList.add('hidden');
@@ -130,8 +122,7 @@
 
       setTimeout(() => {
         boxAll.classList.remove('hidden'); boxSingle.classList.remove('hidden');
-        const catAll = document.getElementById('all-category');
-        const catSingle = document.getElementById('single-category');
+        const catAll = document.getElementById('all-category'); const catSingle = document.getElementById('single-category');
         if (data.kategori && data.kategori.trim() !== '') {
             catAll.innerText = data.kategori; catSingle.innerText = data.kategori;
             catAll.classList.remove('hidden'); catSingle.classList.remove('hidden');
