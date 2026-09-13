@@ -1,9 +1,9 @@
 const { app, BrowserWindow, screen, ipcMain, protocol } = require('electron');
 const { machineIdSync } = require('node-machine-id');
+const path = require('path'); // MODUL WAJIB UNTUK MEMPERBAIKI PATH WINDOWS
 
-// WAJIB: Membuka kunci keamanan agar Windows mengizinkan pemutaran video lokal
 protocol.registerSchemesAsPrivileged([
-  { scheme: 'safe-file', privileges: { secure: true, bypassCSP: true, stream: true } }
+  { scheme: 'asset', privileges: { secure: true, bypassCSP: true, stream: true, supportFetchAPI: true } }
 ]);
 
 let operatorWindow, ledWindow;
@@ -51,15 +51,21 @@ ipcMain.on('send-to-led', (event, data) => {
 });
 
 app.whenReady().then(() => {
-  // MESIN PENERJEMAH FILE: Menjadikan file apapun bisa dibaca tanpa error spasi
-  protocol.registerFileProtocol('safe-file', (request, callback) => {
-    let url = request.url.replace(/^safe-file:\/\//i, '');
-    url = url.split('?')[0].split('#')[0]; // Bersihkan karakter kotor
-    try {
-      callback({ path: decodeURIComponent(url) });
-    } catch (error) {
-      console.error(error);
+  
+  // PROTOKOL ANTI-GAGAL KHUSUS WINDOWS
+  protocol.registerFileProtocol('asset', (request, callback) => {
+    let url = request.url.replace('asset://', '');
+    try { url = decodeURIComponent(url); } catch (e) {}
+
+    // Normalisasi jalur file
+    let filePath = path.normalize(url);
+
+    // FIX WINDOWS: Hapus garis miring siluman di depan huruf C: (\C:\... menjadi C:\...)
+    if (process.platform === 'win32' && filePath.startsWith('\\')) {
+      filePath = filePath.slice(1);
     }
+
+    callback({ path: filePath });
   });
 
   createOperatorWindow();
