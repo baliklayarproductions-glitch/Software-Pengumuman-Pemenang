@@ -16,7 +16,7 @@
   <header class="flex justify-between items-center mb-4 pb-3 border-b border-slate-700 shrink-0">
     <div class="flex items-center gap-3">
       <div class="w-10 h-10 bg-blue-600 rounded flex items-center justify-center font-bold text-xl shadow-lg border border-blue-400">PP</div>
-      <h1 class="text-xl font-bold">Pengumuman Pemenang <span class="bg-emerald-600 text-xs px-2 py-1 rounded ml-2">v4.0 Final</span></h1>
+      <h1 class="text-xl font-bold">Pengumuman Pemenang <span class="bg-emerald-600 text-xs px-2 py-1 rounded ml-2">v5.0 Auto-Save</span></h1>
     </div>
     <button onclick="openLedWindow()" class="bg-emerald-600 hover:bg-emerald-500 px-6 py-2 rounded font-bold shadow-[0_0_15px_rgba(16,185,129,0.5)] transition">🖥️ BUKA LAYAR 2 (LED)</button>
   </header>
@@ -87,7 +87,10 @@
 
       <!-- 3. KUSTOMISASI VISUAL -->
       <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600 pb-8">
-        <h2 class="font-bold text-fuchsia-400 border-b border-slate-600 pb-2 mb-3">3. Kustomisasi Layar LED</h2>
+        <h2 class="font-bold text-fuchsia-400 border-b border-slate-600 pb-2 mb-3 flex justify-between">
+          3. Kustomisasi Layar LED
+          <span class="text-[10px] bg-emerald-700 text-white px-2 py-1 rounded">Auto-Saved</span>
+        </h2>
         
         <div class="grid grid-cols-3 gap-3 mb-4">
           <div><label class="text-xs block mb-1">Warna Box J3</label><input type="color" id="col-j3" value="#d97706" oninput="updateVisuals()" class="w-full h-8 cursor-pointer rounded"></div>
@@ -100,7 +103,12 @@
           <div><label class="block mb-1 text-blue-300 font-bold">Ukuran NOMOR Dada</label><input type="range" id="no-size" min="50" max="300" value="120" oninput="updateVisuals()" class="w-full"></div>
           <div><label class="block mb-1 text-emerald-300 font-bold">Ukuran NAMA Pemenang</label><input type="range" id="font-size" min="50" max="300" value="150" oninput="updateVisuals()" class="w-full"></div>
           <div><label class="block mb-1">Posisi Kotak (Geser Atas/Bawah)</label><input type="range" id="box-y" min="-500" max="500" value="0" oninput="updateVisuals()" class="w-full"></div>
-          <div><label class="block mb-1">Background (Video/Gambar)</label><input type="file" id="bg-file" accept="video/*, image/*" onchange="updateVisuals()" class="w-full bg-slate-900 p-1 rounded"></div>
+          
+          <div>
+            <label class="block mb-1">Background (Video/Gambar)</label>
+            <input type="file" id="bg-file" accept="video/*, image/*" onchange="updateVisuals()" class="w-full bg-slate-900 p-1 rounded">
+            <p id="bg-status" class="text-[10px] text-fuchsia-300 mt-1 italic">Belum ada background tersimpan.</p>
+          </div>
         </div>
       </div>
 
@@ -148,7 +156,35 @@
   <script>
     const { ipcRenderer } = require('electron');
 
+    // === SISTEM AUTO-SAVE & MEMORY ===
     let queue = [];
+    let savedBgPath = localStorage.getItem('bgPath') || null;
+    let savedBgType = localStorage.getItem('bgType') || null;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      // 1. Load Data Visual (Warna & Ukuran)
+      const settingIds = ['col-j3', 'col-j1', 'col-j2', 'title-size', 'no-size', 'font-size', 'box-y'];
+      settingIds.forEach(id => {
+        const savedVal = localStorage.getItem(id);
+        if (savedVal) document.getElementById(id).value = savedVal;
+      });
+
+      // 2. Load Status Background File
+      if(savedBgPath) {
+        let fileName = savedBgPath.split('\\').pop().split('/').pop();
+        document.getElementById('bg-status').innerText = `✅ Tersimpan: ${fileName}`;
+      }
+
+      // 3. Load Daftar Antrean
+      const savedQueue = localStorage.getItem('queueData');
+      if (savedQueue) {
+        queue = JSON.parse(savedQueue);
+        renderQueue();
+      }
+    });
+
+
+    // === SISTEM ANTREAN ===
     function addToQueue() {
       const k = document.getElementById('q-kat').value;
       const j1no = document.getElementById('q-j1-no').value;
@@ -165,10 +201,14 @@
       document.getElementById('q-j1-no').value = ''; document.getElementById('q-j1-nama').value = '';
       document.getElementById('q-j2-no').value = ''; document.getElementById('q-j2-nama').value = '';
       document.getElementById('q-j3-no').value = ''; document.getElementById('q-j3-nama').value = '';
+      
       renderQueue();
     }
 
     function renderQueue() {
+      // Save Queue to Memory setiap kali di-render
+      localStorage.setItem('queueData', JSON.stringify(queue));
+
       const list = document.getElementById('queue-list');
       list.innerHTML = '';
       queue.forEach((q, idx) => {
@@ -178,7 +218,10 @@
               <span class="font-bold text-emerald-400">${q.k || 'Tanpa Kategori'}</span><br>
               <span class="text-slate-400">1: ${q.j1nama} | 2: ${q.j2nama} | 3: ${q.j3nama}</span>
             </div>
-            <button onclick="loadFromQueue(${idx})" class="bg-blue-600 hover:bg-blue-500 px-3 py-1 rounded font-bold shrink-0">Load</button>
+            <div class="flex gap-1 shrink-0">
+              <button onclick="loadFromQueue(${idx})" class="bg-blue-600 hover:bg-blue-500 px-3 py-1 rounded font-bold">Load</button>
+              <button onclick="deleteQueue(${idx})" class="bg-red-600 hover:bg-red-500 px-2 py-1 rounded font-bold text-white">🗑️</button>
+            </div>
           </li>
         `;
       });
@@ -193,6 +236,14 @@
       updateStandbyPreview();
     }
 
+    function deleteQueue(idx) {
+      if(confirm('Hapus antrean ini?')) {
+        queue.splice(idx, 1);
+        renderQueue();
+      }
+    }
+
+    // === PREVIEW ===
     function updateStandbyPreview() {
       const kat = document.getElementById('kategori').value;
       const elKat = document.getElementById('prev-kat');
@@ -207,18 +258,21 @@
       document.getElementById('prev-j3-nama').innerText = document.getElementById('j3-nama').value || '-';
     }
 
-    function openLedWindow() { ipcRenderer.send('open-led'); }
+
+    // === ELECTRON COMMS ===
+    function openLedWindow() { 
+      ipcRenderer.send('open-led'); 
+      // Jeda sejenak agar window load, lalu langsung suntikkan visual yang tersimpan
+      setTimeout(updateVisuals, 1000); 
+    }
 
     function sendToLive(action) {
       const kat = document.getElementById('kategori').value || '';
       const dataLive = {
         action: action, kategori: kat,
-        j1no: document.getElementById('j1-no').value || '-',
-        j1nama: document.getElementById('j1-nama').value || '-',
-        j2no: document.getElementById('j2-no').value || '-',
-        j2nama: document.getElementById('j2-nama').value || '-',
-        j3no: document.getElementById('j3-no').value || '-',
-        j3nama: document.getElementById('j3-nama').value || '-'
+        j1no: document.getElementById('j1-no').value || '-', j1nama: document.getElementById('j1-nama').value || '-',
+        j2no: document.getElementById('j2-no').value || '-', j2nama: document.getElementById('j2-nama').value || '-',
+        j3no: document.getElementById('j3-no').value || '-', j3nama: document.getElementById('j3-nama').value || '-'
       };
       
       const liveDiv = document.getElementById('live-container');
@@ -246,13 +300,30 @@
 
     function updateVisuals() {
       const fileInput = document.getElementById('bg-file');
-      let bgPath = null; let bgType = null;
+      
+      // Jika user memilih file baru
       if (fileInput.files.length > 0) {
-        bgPath = fileInput.files[0].path; bgType = fileInput.files[0].type;
+        savedBgPath = fileInput.files[0].path; 
+        savedBgType = fileInput.files[0].type;
+        // Save to memory
+        localStorage.setItem('bgPath', savedBgPath);
+        localStorage.setItem('bgType', savedBgType);
+        
+        let fileName = savedBgPath.split('\\').pop().split('/').pop();
+        document.getElementById('bg-status').innerText = `✅ Tersimpan: ${fileName}`;
       }
+
+      // Save Data Visual Slider & Warna ke Memory
+      const settings = ['col-j3', 'col-j1', 'col-j2', 'title-size', 'no-size', 'font-size', 'box-y'];
+      settings.forEach(id => {
+         localStorage.setItem(id, document.getElementById(id).value);
+      });
+
+      // Kirim Visual ke Layar 2
       ipcRenderer.send('send-to-led', {
         action: 'update-visuals',
-        bgPath: bgPath, bgType: bgType,
+        bgPath: savedBgPath, 
+        bgType: savedBgType,
         noSize: document.getElementById('no-size').value + '%',
         fontSize: document.getElementById('font-size').value + '%',
         titleSize: document.getElementById('title-size').value + '%',
