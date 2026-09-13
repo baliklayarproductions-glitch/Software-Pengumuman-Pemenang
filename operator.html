@@ -29,14 +29,14 @@
   <header class="flex justify-between items-center mb-4 pb-3 border-b border-slate-700 shrink-0">
     <div class="flex items-center gap-3">
       <div class="w-10 h-10 bg-blue-600 rounded flex items-center justify-center font-bold text-xl shadow-lg border border-blue-400">PP</div>
-      <h1 class="text-xl font-bold">Pengumuman Pemenang <span class="bg-emerald-600 text-xs px-2 py-1 rounded ml-2">v12.0 GUARANTEED</span></h1>
+      <h1 class="text-xl font-bold">Pengumuman Pemenang <span class="bg-emerald-600 text-xs px-2 py-1 rounded ml-2">v13.0 Server Edition</span></h1>
     </div>
     <button onclick="openLedWindow()" class="bg-emerald-600 hover:bg-emerald-500 px-6 py-2 rounded font-bold shadow-[0_0_15px_rgba(16,185,129,0.5)] transition">🖥️ BUKA LAYAR 2 (LED)</button>
   </header>
 
   <div class="flex gap-4 flex-1 h-full overflow-hidden">
-    <!-- KIRI -->
     <div class="w-[45%] bg-slate-800 p-4 rounded-xl shadow-xl flex flex-col gap-4 overflow-y-auto">
+      
       <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600">
         <h2 class="font-bold text-emerald-400 border-b border-slate-600 pb-2 mb-3">1. Persiapan / Daftar Tunggu</h2>
         <div class="flex flex-col gap-2 text-sm mb-3">
@@ -70,11 +70,13 @@
 
       <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600 pb-8">
         <h2 class="font-bold text-fuchsia-400 border-b border-slate-600 pb-2 mb-3 flex justify-between">3. Kustomisasi Layar LED<span class="text-[10px] bg-emerald-700 text-white px-2 py-1 rounded">Auto-Saved</span></h2>
+        
         <div class="grid grid-cols-3 gap-3 mb-4">
-          <div><label class="text-xs block mb-1">Warna J3</label><input type="color" id="col-j3" value="#d97706" oninput="updateVisuals()" class="w-full h-8 rounded cursor-pointer"></div>
-          <div><label class="text-xs block mb-1">Warna J1</label><input type="color" id="col-j1" value="#eab308" oninput="updateVisuals()" class="w-full h-8 rounded cursor-pointer"></div>
-          <div><label class="text-xs block mb-1">Warna J2</label><input type="color" id="col-j2" value="#64748b" oninput="updateVisuals()" class="w-full h-8 rounded cursor-pointer"></div>
+          <div><label class="text-xs block mb-1">Warna Box J3</label><input type="color" id="col-j3" value="#d97706" oninput="updateVisuals()" class="w-full h-8 cursor-pointer rounded"></div>
+          <div><label class="text-xs block mb-1">Warna Box J1</label><input type="color" id="col-j1" value="#eab308" oninput="updateVisuals()" class="w-full h-8 cursor-pointer rounded"></div>
+          <div><label class="text-xs block mb-1">Warna Box J2</label><input type="color" id="col-j2" value="#64748b" oninput="updateVisuals()" class="w-full h-8 cursor-pointer rounded"></div>
         </div>
+
         <div class="space-y-4 text-xs font-bold text-slate-300">
           <div class="grid grid-cols-2 gap-4 border-b border-slate-600 pb-4">
              <div><label class="block mb-1 text-yellow-400">Ukuran "PEMENANG LOMBA"</label><input type="range" id="size-main" min="20" max="150" value="60" oninput="updateVisuals()" class="w-full"></div>
@@ -86,17 +88,19 @@
              <div><label class="block mb-1 text-emerald-300">Ukuran NAMA Pemenang</label><input type="range" id="font-size" min="50" max="300" value="150" oninput="updateVisuals()" class="w-full"></div>
              <div><label class="block mb-1 text-fuchsia-300">Skala KOTAK (Besar/Kecil)</label><input type="range" id="box-scale" min="50" max="150" value="100" oninput="updateVisuals()" class="w-full"></div>
           </div>
+          
           <div class="grid grid-cols-2 gap-4 border-b border-slate-600 pb-4">
-             <div><label class="block mb-1 text-white">Posisi Kotak (Atas/Bawah)</label><input type="range" id="box-y" min="-500" max="500" value="0" oninput="updateVisuals()" class="w-full"></div>
-             <div><label class="block mb-1 text-orange-300">Ketinggian Kotak (Ruang Dalam)</label><input type="range" id="box-pad" min="10" max="150" value="48" oninput="updateVisuals()" class="w-full"></div>
+             <div><label class="block mb-1 text-white">Posisi Kotak (Geser Atas/Bawah)</label><input type="range" id="box-y" min="-500" max="500" value="0" oninput="updateVisuals()" class="w-full"></div>
+             <div><label class="block mb-1 text-orange-300">Ketinggian Kotak (Ruang Atas-Bawah)</label><input type="range" id="box-pad" min="10" max="150" value="48" oninput="updateVisuals()" class="w-full"></div>
           </div>
+
           <div class="mt-4 p-3 bg-slate-900 rounded border border-slate-700">
             <label class="block mb-1 text-yellow-400">Background (Video / Gambar Bebas)</label>
             <div class="flex gap-2">
               <input type="file" id="bg-file" accept="video/*, image/*" onchange="updateVisuals()" class="w-full bg-slate-800 p-2 rounded cursor-pointer border border-slate-600 text-white text-xs">
               <button onclick="clearBackground()" class="bg-red-600 hover:bg-red-500 px-3 rounded font-bold shadow-lg">Hapus BG</button>
             </div>
-            <p id="bg-status" class="text-[10px] text-fuchsia-300 mt-2 italic">Belum ada background.</p>
+            <p id="bg-status" class="text-[10px] text-fuchsia-300 mt-2 italic">Belum ada background tersimpan.</p>
           </div>
         </div>
       </div>
@@ -111,7 +115,6 @@
           <img id="prev-bg-image" class="absolute inset-0 w-full h-full object-cover -z-10 hidden" />
           <div id="prev-bg-fallback" class="absolute inset-0 bg-slate-900 -z-20"></div>
 
-          <!-- URUTAN DIPERBAIKI -->
           <h1 class="text-xl font-black text-white/80 mb-1 tracking-widest uppercase drop-shadow">PEMENANG LOMBA</h1>
           <p id="prev-kat" class="text-[10px] font-bold text-white mb-2 uppercase tracking-widest bg-black/60 px-4 py-1 rounded-full border border-white/20 hidden">KATEGORI</p>
           
@@ -139,25 +142,25 @@
     let savedBgPath = localStorage.getItem('bgPath') || null;
     let savedBgType = localStorage.getItem('bgType') || null;
 
-    // FUNGSI KONVERSI PATH ANTI-GAGAL
-    function getSafeFileURI(filePath) {
-      if (!filePath) return '';
-      let safePath = filePath.replace(/\\/g, '/');
-      if (!safePath.startsWith('/')) safePath = '/' + safePath;
-      // encodeURI mengubah spasi dsb menjadi %20 agar bisa dibaca Chromium
-      return 'file://' + encodeURI(safePath).replace(/#/g, '%23').replace(/\?/g, '%3F');
-    }
-
     window.addEventListener('DOMContentLoaded', async () => {
-      if(localStorage.getItem('isActivated') === 'true') { document.getElementById('lock-screen').style.display = 'none'; } 
-      else { const hwid = await ipcRenderer.invoke('get-hwid'); document.getElementById('hwid-display').value = hwid; }
+      if(localStorage.getItem('isActivated') === 'true') {
+        document.getElementById('lock-screen').style.display = 'none';
+      } else {
+        const hwid = await ipcRenderer.invoke('get-hwid');
+        document.getElementById('hwid-display').value = hwid;
+      }
 
       const settingIds = ['col-j3', 'col-j1', 'col-j2', 'title-size', 'no-size', 'font-size', 'box-y', 'size-main', 'size-kat', 'box-scale', 'box-pad'];
-      settingIds.forEach(id => { const savedVal = localStorage.getItem(id); if (savedVal) document.getElementById(id).value = savedVal; });
+      settingIds.forEach(id => {
+        const savedVal = localStorage.getItem(id);
+        if (savedVal) document.getElementById(id).value = savedVal;
+      });
 
       if(savedBgPath) {
         let fileName = savedBgPath.split('\\').pop().split('/').pop();
         document.getElementById('bg-status').innerText = `✅ Tersimpan: ${fileName}`;
+        // Registrasikan file ini ke Server Lokal saat aplikasi baru dibuka
+        ipcRenderer.send('set-media', { filePath: savedBgPath, mimeType: savedBgType });
       }
 
       const savedQueue = localStorage.getItem('queueData');
@@ -169,8 +172,11 @@
     async function activateApp() {
       const key = document.getElementById('license-input').value.trim();
       const isValid = await ipcRenderer.invoke('verify-license', key);
-      if(isValid) { localStorage.setItem('isActivated', 'true'); document.getElementById('lock-screen').style.display = 'none'; alert("Aktivasi Berhasil!"); } 
-      else { alert("License Key Salah!"); }
+      if(isValid) {
+        localStorage.setItem('isActivated', 'true');
+        document.getElementById('lock-screen').style.display = 'none';
+        alert("Aktivasi Berhasil! Selamat Datang.");
+      } else { alert("License Key Salah!"); }
     }
 
     function addToQueue() {
@@ -193,8 +199,8 @@
       const list = document.getElementById('queue-list');
       list.innerHTML = '';
       queue.forEach((q, idx) => {
-        // FIX FREEZE: event.stopPropagation() memutus kebingungan sistem
-        list.innerHTML += `<li class="bg-slate-900 p-2 rounded text-xs flex justify-between items-center border border-slate-700"><div class="truncate pr-2"><span class="font-bold text-emerald-400">${q.k || 'Tanpa Kategori'}</span><br><span class="text-slate-400">1: ${q.j1nama} | 2: ${q.j2nama} | 3: ${q.j3nama}</span></div><div class="flex gap-1 shrink-0"><button onclick="loadFromQueue(${idx})" class="bg-blue-600 hover:bg-blue-500 px-3 py-1 rounded font-bold">Load</button><button onclick="deleteQueue(event, ${idx})" class="bg-red-600 hover:bg-red-500 px-2 py-1 rounded font-bold text-white">🗑️</button></div></li>`;
+        // Trik Hapus Antrean Tanpa Freeze
+        list.innerHTML += `<li class="bg-slate-900 p-2 rounded text-xs flex justify-between items-center border border-slate-700"><div class="truncate pr-2"><span class="font-bold text-emerald-400">${q.k || 'Tanpa Kategori'}</span><br><span class="text-slate-400">1: ${q.j1nama} | 2: ${q.j2nama} | 3: ${q.j3nama}</span></div><div class="flex gap-1 shrink-0"><button onclick="loadFromQueue(${idx})" class="bg-blue-600 hover:bg-blue-500 px-3 py-1 rounded font-bold">Load</button><button onclick="deleteQ(${idx})" class="bg-red-600 hover:bg-red-500 px-2 py-1 rounded font-bold text-white">🗑️</button></div></li>`;
       });
     }
 
@@ -207,12 +213,10 @@
       updateStandbyPreview();
     }
 
-    function deleteQueue(event, idx) { 
-      if (event) { event.preventDefault(); event.stopPropagation(); }
-      queue.splice(idx, 1); 
-      renderQueue(); 
-      // Kembalikan fokus ke kolom input agar tidak nge-freeze
-      setTimeout(() => { document.getElementById('q-kat').focus(); }, 50);
+    // FIX MACET HAPUS ANTREAN
+    function deleteQ(idx) {
+      document.getElementById('q-kat').focus(); // Pindahkan fokus ke input agar window tidak bingung
+      setTimeout(() => { queue.splice(idx, 1); renderQueue(); }, 10);
     }
 
     function updateStandbyPreview() {
@@ -274,25 +278,36 @@
 
     function updateVisuals() {
       const fileInput = document.getElementById('bg-file');
+      
       if (fileInput.files.length > 0) {
-        savedBgPath = fileInput.files[0].path; savedBgType = fileInput.files[0].type;
-        localStorage.setItem('bgPath', savedBgPath); localStorage.setItem('bgType', savedBgType);
+        savedBgPath = fileInput.files[0].path; 
+        savedBgType = fileInput.files[0].type;
+        localStorage.setItem('bgPath', savedBgPath);
+        localStorage.setItem('bgType', savedBgType);
+        
         let fileName = savedBgPath.split('\\').pop().split('/').pop();
         document.getElementById('bg-status').innerText = `✅ Tersimpan: ${fileName}`;
+        
+        // Daftarkan file baru ke Server Web Internal
+        ipcRenderer.send('set-media', { filePath: savedBgPath, mimeType: savedBgType });
       }
 
+      // TAMPILKAN DARI SERVER WEB INTERNAL (Anti-Blokir)
       const prevVideo = document.getElementById('prev-bg-video');
       const prevImage = document.getElementById('prev-bg-image');
       const prevFallback = document.getElementById('prev-bg-fallback');
       
       if (savedBgPath) {
         prevFallback.classList.add('hidden');
-        const safeURI = getSafeFileURI(savedBgPath); // PANGGIL FUNGSI ANTI-GAGAL
+        // Murni dari Localhost, dengan tambahan waktu agar tidak di-cache
+        const safeURI = 'http://localhost:49201/bg-media?t=' + Date.now();
+        
         if (savedBgType && savedBgType.startsWith('video/')) {
           prevImage.classList.add('hidden'); prevVideo.src = safeURI;
           prevVideo.classList.remove('hidden'); prevVideo.play().catch(e=>{});
         } else {
-          prevVideo.classList.add('hidden'); prevImage.src = safeURI; prevImage.classList.remove('hidden');
+          prevVideo.classList.add('hidden'); prevImage.src = safeURI;
+          prevImage.classList.remove('hidden');
         }
       } else {
         prevVideo.classList.add('hidden'); prevImage.classList.add('hidden'); prevFallback.classList.remove('hidden');
