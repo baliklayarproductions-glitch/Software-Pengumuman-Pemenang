@@ -11,9 +11,6 @@
   "build": {
     "appId": "com.studio.pengumumanpemenang",
     "productName": "Software Pengumuman Pemenang",
-    "mac": {
-      "target": "dmg"
-    },
     "win": {
       "target": "nsis"
     }
