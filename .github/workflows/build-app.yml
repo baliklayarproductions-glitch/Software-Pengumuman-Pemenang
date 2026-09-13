@@ -1,4 +1,4 @@
-name: Build Desktop App
+name: Build Windows App
 
 on:
   push:
@@ -7,10 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [macos-latest, windows-latest]
+    runs-on: windows-latest
 
     steps:
       - name: Checkout Repository
@@ -32,5 +29,5 @@ jobs:
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: software-pemenang-${{ matrix.os }}
+          name: software-pemenang-windows
           path: dist/
