@@ -1,10 +1,5 @@
-const { app, BrowserWindow, screen, ipcMain, protocol } = require('electron');
+const { app, BrowserWindow, screen, ipcMain } = require('electron');
 const { machineIdSync } = require('node-machine-id');
-
-// HARUS DI DEKLARASIKAN SEBELUM APP READY AGAR VIDEO LOKAL BISA DIPUTAR DI .EXE
-protocol.registerSchemesAsPrivileged([
-  { scheme: 'local-media', privileges: { standard: true, secure: true, supportFetchAPI: true, bypassCSP: true, stream: true } }
-]);
 
 let operatorWindow, ledWindow;
 
@@ -29,7 +24,11 @@ ipcMain.on('open-led', () => {
   const externalDisplay = displays.find((display) => display.bounds.x !== 0 || display.bounds.y !== 0);
 
   let windowOptions = {
-    webPreferences: { nodeIntegration: true, contextIsolation: false, webSecurity: false },
+    webPreferences: { 
+      nodeIntegration: true, 
+      contextIsolation: false, 
+      webSecurity: false // PENTING: Mengizinkan akses file lokal
+    },
     frame: false, backgroundColor: '#000000'
   };
 
@@ -50,15 +49,5 @@ ipcMain.on('send-to-led', (event, data) => {
   if (ledWindow) ledWindow.webContents.send('update-led', data);
 });
 
-app.whenReady().then(() => {
-  // Daftarkan Custom Protocol untuk Video/Image Background
-  protocol.registerFileProtocol('local-media', (request, callback) => {
-    const url = request.url.replace('local-media://', '');
-    try { return callback(decodeURIComponent(url)); } 
-    catch (error) { console.error(error); }
-  });
-
-  createOperatorWindow();
-});
-
+app.whenReady().then(createOperatorWindow);
 app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(); });
