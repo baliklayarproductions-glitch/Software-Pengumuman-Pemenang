@@ -1,8 +1,7 @@
-const { app, BrowserWindow, screen, ipcMain } = require('electron');
+const { app, BrowserWindow, screen, ipcMain, protocol } = require('electron');
 const { machineIdSync } = require('node-machine-id');
 
-let operatorWindow;
-let ledWindow;
+let operatorWindow, ledWindow;
 
 function createOperatorWindow() {
   operatorWindow = new BrowserWindow({
@@ -13,6 +12,7 @@ function createOperatorWindow() {
   operatorWindow.loadFile('operator.html');
 }
 
+// SISTEM LISENSI
 ipcMain.handle('get-hwid', () => machineIdSync());
 ipcMain.handle('verify-license', (event, inputKey) => {
   const hwid = machineIdSync();
@@ -20,6 +20,7 @@ ipcMain.handle('verify-license', (event, inputKey) => {
   return inputKey === expectedKey;
 });
 
+// MEMBUKA LAYAR LED
 ipcMain.on('open-led', () => {
   if (ledWindow) return;
 
@@ -27,13 +28,8 @@ ipcMain.on('open-led', () => {
   const externalDisplay = displays.find((display) => display.bounds.x !== 0 || display.bounds.y !== 0);
 
   let windowOptions = {
-    webPreferences: { 
-      nodeIntegration: true, 
-      contextIsolation: false,
-      webSecurity: false // PENTING: Mengizinkan load video/gambar dari Hardisk Lokal
-    },
-    frame: false,
-    backgroundColor: '#000000'
+    webPreferences: { nodeIntegration: true, contextIsolation: false, webSecurity: false },
+    frame: false, backgroundColor: '#000000'
   };
 
   if (externalDisplay) {
@@ -41,13 +37,11 @@ ipcMain.on('open-led', () => {
     windowOptions.y = externalDisplay.bounds.y;
     windowOptions.fullscreen = true;
   } else {
-    windowOptions.width = 800;
-    windowOptions.height = 450;
+    windowOptions.width = 800; windowOptions.height = 450;
   }
 
   ledWindow = new BrowserWindow(windowOptions);
   ledWindow.loadFile('led.html');
-
   ledWindow.on('closed', () => { ledWindow = null; });
 });
 
@@ -55,5 +49,18 @@ ipcMain.on('send-to-led', (event, data) => {
   if (ledWindow) ledWindow.webContents.send('update-led', data);
 });
 
-app.whenReady().then(createOperatorWindow);
+app.whenReady().then(() => {
+  // FIX BACKGROUND UNTUK WINDOWS .EXE (Custom Protocol)
+  protocol.registerFileProtocol('local-media', (request, callback) => {
+    const url = request.url.replace('local-media://', '');
+    try {
+      return callback(decodeURIComponent(url));
+    } catch (error) {
+      console.error(error);
+    }
+  });
+
+  createOperatorWindow();
+});
+
 app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit(); });
