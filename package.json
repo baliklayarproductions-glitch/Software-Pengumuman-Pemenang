@@ -1,0 +1,29 @@
+{
+  "name": "pengumuman-pemenang",
+  "version": "1.0.0",
+  "description": "Software LED Pengumuman Pemenang Lari",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder build --mac --win"
+  },
+  "build": {
+    "appId": "com.studio.pengumumanpemenang",
+    "productName": "Software Pengumuman Pemenang",
+    "mac": {
+      "target": "dmg",
+      "icon": "build/icon.icns"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.ico"
+    }
+  },
+  "dependencies": {
+    "node-machine-id": "^1.1.12"
+  },
+  "devDependencies": {
+    "electron": "^25.0.0",
+    "electron-builder": "^24.0.0"
+  }
+}
