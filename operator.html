@@ -29,7 +29,7 @@
   <header class="flex justify-between items-center mb-4 pb-3 border-b border-slate-700 shrink-0">
     <div class="flex items-center gap-3">
       <div class="w-10 h-10 bg-blue-600 rounded flex items-center justify-center font-bold text-xl shadow-lg border border-blue-400">PP</div>
-      <h1 class="text-xl font-bold">Pengumuman Pemenang <span class="bg-emerald-600 text-xs px-2 py-1 rounded ml-2">v10.0 FINAL PRO</span></h1>
+      <h1 class="text-xl font-bold">Pengumuman Pemenang <span class="bg-emerald-600 text-xs px-2 py-1 rounded ml-2">v11.0 Fix Media</span></h1>
     </div>
     <button onclick="openLedWindow()" class="bg-emerald-600 hover:bg-emerald-500 px-6 py-2 rounded font-bold shadow-[0_0_15px_rgba(16,185,129,0.5)] transition">🖥️ BUKA LAYAR 2 (LED)</button>
   </header>
@@ -114,13 +114,10 @@
 
     <!-- PANEL KANAN -->
     <div class="w-[55%] flex flex-col gap-4 overflow-y-auto pr-2 pb-6">
-      
-      <!-- MONITOR STANDBY KINI MENAMPILKAN BACKGROUND NYATA -->
       <div class="bg-slate-800 p-3 rounded-xl shadow-xl border border-slate-600 flex flex-col shrink-0">
         <h2 class="font-bold text-xs text-blue-400 mb-2 flex items-center"><span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse mr-2"></span> PREVIEW STANDBY (16:9)</h2>
         <div class="w-full aspect-video bg-black rounded border-2 border-dashed border-slate-600 relative overflow-hidden flex flex-col items-center justify-center p-4">
           
-          <!-- Latar Belakang di Preview -->
           <video id="prev-bg-video" autoplay loop muted class="absolute inset-0 w-full h-full object-cover -z-10 hidden"></video>
           <img id="prev-bg-image" class="absolute inset-0 w-full h-full object-cover -z-10 hidden" />
           <div id="prev-bg-fallback" class="absolute inset-0 bg-slate-900 -z-20"></div>
@@ -174,7 +171,6 @@
       const savedQueue = localStorage.getItem('queueData');
       if (savedQueue) { queue = JSON.parse(savedQueue); renderQueue(); }
       
-      // Memicu visual awal agar preview background langsung muncul
       setTimeout(updateVisuals, 500); 
     });
 
@@ -200,7 +196,7 @@
       document.getElementById('q-j2-no').value = ''; document.getElementById('q-j2-nama').value = '';
       document.getElementById('q-j3-no').value = ''; document.getElementById('q-j3-nama').value = '';
       renderQueue();
-      document.getElementById('q-kat').focus(); // Kembali fokus agar nyaman ngetik
+      document.getElementById('q-kat').focus();
     }
 
     function renderQueue() {
@@ -208,7 +204,6 @@
       const list = document.getElementById('queue-list');
       list.innerHTML = '';
       queue.forEach((q, idx) => {
-        // PENTING: event.preventDefault() untuk mencegah BUG Freeze di Windows
         list.innerHTML += `<li class="bg-slate-900 p-2 rounded text-xs flex justify-between items-center border border-slate-700"><div class="truncate pr-2"><span class="font-bold text-emerald-400">${q.k || 'Tanpa Kategori'}</span><br><span class="text-slate-400">1: ${q.j1nama} | 2: ${q.j2nama} | 3: ${q.j3nama}</span></div><div class="flex gap-1 shrink-0"><button onclick="event.preventDefault(); loadFromQueue(${idx})" class="bg-blue-600 hover:bg-blue-500 px-3 py-1 rounded font-bold">Load</button><button onclick="event.preventDefault(); deleteQueue(${idx})" class="bg-red-600 hover:bg-red-500 px-2 py-1 rounded font-bold text-white">🗑️</button></div></li>`;
       });
     }
@@ -225,7 +220,7 @@
     function deleteQueue(idx) { 
       queue.splice(idx, 1); 
       renderQueue(); 
-      document.getElementById('q-kat').focus(); // Mencegah Windows Freeze
+      document.getElementById('q-kat').focus(); 
     }
 
     function updateStandbyPreview() {
@@ -300,14 +295,13 @@
         document.getElementById('bg-status').innerText = `✅ Tersimpan: ${fileName}`;
       }
 
-      // UPDATE BACKGROUND DI PREVIEW OPERATOR
       const prevVideo = document.getElementById('prev-bg-video');
       const prevImage = document.getElementById('prev-bg-image');
       const prevFallback = document.getElementById('prev-bg-fallback');
       
       if (savedBgPath) {
         prevFallback.classList.add('hidden');
-        const safeURI = 'safe-file://' + encodeURIComponent(savedBgPath);
+        const safeURI = 'asset://' + savedBgPath; // Menggunakan protocol asset yang sudah diperbaiki
         if (savedBgType && savedBgType.startsWith('video/')) {
           prevImage.classList.add('hidden'); prevVideo.src = safeURI;
           prevVideo.classList.remove('hidden'); prevVideo.play().catch(e=>{});
