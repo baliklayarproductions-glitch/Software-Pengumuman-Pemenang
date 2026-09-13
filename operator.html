@@ -9,8 +9,6 @@
     ::-webkit-scrollbar-track { background: #1e293b; }
     ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: #64748b; }
-    
-    /* Mirror Style untuk Live Preview agar mirip LED */
     .prev-box { border: 2px solid rgba(255,255,255,0.4); border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
   </style>
 </head>
@@ -32,17 +30,15 @@
   <header class="flex justify-between items-center mb-4 pb-3 border-b border-slate-700 shrink-0">
     <div class="flex items-center gap-3">
       <div class="w-10 h-10 bg-blue-600 rounded flex items-center justify-center font-bold text-xl shadow-lg border border-blue-400">PP</div>
-      <h1 class="text-xl font-bold">Pengumuman Pemenang <span class="bg-emerald-600 text-xs px-2 py-1 rounded ml-2">v8.0 Perfect Sync</span></h1>
+      <h1 class="text-xl font-bold">Pengumuman Pemenang <span class="bg-emerald-600 text-xs px-2 py-1 rounded ml-2">v9.0 Media NATIVE</span></h1>
     </div>
     <button onclick="openLedWindow()" class="bg-emerald-600 hover:bg-emerald-500 px-6 py-2 rounded font-bold shadow-[0_0_15px_rgba(16,185,129,0.5)] transition">🖥️ BUKA LAYAR 2 (LED)</button>
   </header>
 
   <div class="flex gap-4 flex-1 h-full overflow-hidden">
-    
     <!-- PANEL KIRI -->
     <div class="w-[45%] bg-slate-800 p-4 rounded-xl shadow-xl flex flex-col gap-4 overflow-y-auto">
       
-      <!-- 1. DAFTAR TUNGGU (QUEUE) -->
       <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600">
         <h2 class="font-bold text-emerald-400 border-b border-slate-600 pb-2 mb-3">1. Persiapan / Daftar Tunggu</h2>
         <div class="flex flex-col gap-2 text-sm mb-3">
@@ -64,7 +60,6 @@
         <ul id="queue-list" class="space-y-2 max-h-32 overflow-y-auto pr-2"></ul>
       </div>
 
-      <!-- 2. KONTROL AKTIF -->
       <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600">
         <h2 class="font-bold text-blue-400 border-b border-slate-600 pb-2 mb-3">2. Panel Standby (Siap Tayang)</h2>
         <div class="space-y-3 mb-4">
@@ -84,7 +79,6 @@
         </div>
       </div>
 
-      <!-- 3. KUSTOMISASI VISUAL -->
       <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600 pb-8">
         <h2 class="font-bold text-fuchsia-400 border-b border-slate-600 pb-2 mb-3 flex justify-between">3. Kustomisasi Layar LED<span class="text-[10px] bg-emerald-700 text-white px-2 py-1 rounded">Auto-Saved</span></h2>
         
@@ -113,12 +107,14 @@
 
           <div class="mt-4 p-3 bg-slate-900 rounded border border-slate-700">
             <label class="block mb-1 text-yellow-400">Background (Video / Gambar Bebas)</label>
-            <input type="file" id="bg-file" accept="video/*, image/*" onchange="updateVisuals()" class="w-full bg-slate-800 p-2 rounded cursor-pointer border border-slate-600 text-white">
+            <div class="flex gap-2">
+              <input type="file" id="bg-file" accept="video/*, image/*" onchange="updateVisuals()" class="w-full bg-slate-800 p-2 rounded cursor-pointer border border-slate-600 text-white text-xs">
+              <button onclick="clearBackground()" class="bg-red-600 hover:bg-red-500 px-3 rounded font-bold shadow-lg">Hapus BG</button>
+            </div>
             <p id="bg-status" class="text-[10px] text-fuchsia-300 mt-2 italic">Belum ada background tersimpan.</p>
           </div>
         </div>
       </div>
-
     </div>
 
     <!-- PANEL KANAN (MONITORS) -->
@@ -126,10 +122,8 @@
       <div class="bg-slate-800 p-3 rounded-xl shadow-xl border border-slate-600 flex flex-col shrink-0">
         <h2 class="font-bold text-xs text-blue-400 mb-2 flex items-center"><span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse mr-2"></span> PREVIEW STANDBY (16:9)</h2>
         <div class="w-full aspect-video bg-black rounded border-2 border-dashed border-slate-600 relative overflow-hidden flex flex-col items-center justify-center p-4">
-          <!-- Standby Preview kini disesuaikan agar susunannya 100% mirip -->
           <h1 class="text-xl font-black text-white/50 mb-1 tracking-widest uppercase">PEMENANG LOMBA</h1>
           <p id="prev-kat" class="text-[10px] font-bold text-white/50 mb-2 uppercase tracking-widest bg-blue-900/50 px-4 py-1 rounded-full hidden">KATEGORI</p>
-          
           <div class="grid grid-cols-3 gap-2 w-full text-center items-end">
             <div class="prev-box bg-amber-700/50 py-2 px-1"><p class="text-[9px] text-black font-bold">JUARA 3</p><p id="prev-j3-no" class="text-[10px] text-white/80 font-mono mt-1">-</p><p id="prev-j3-nama" class="text-xs font-bold text-white truncate">-</p></div>
             <div class="prev-box bg-yellow-600/50 py-4 px-2 border-2 border-yellow-500/50 z-10"><p class="text-[10px] text-black font-bold">JUARA 1</p><p id="prev-j1-no" class="text-xs text-white/90 font-mono mt-1">-</p><p id="prev-j1-nama" class="text-sm font-black text-white truncate">-</p></div>
@@ -221,11 +215,7 @@
       updateStandbyPreview();
     }
 
-    // FIX DAFTAR TUNGGU FREEZE: Menghapus alert/confirm sepenuhnya
-    function deleteQueue(idx) { 
-      queue.splice(idx, 1); 
-      renderQueue(); 
-    }
+    function deleteQueue(idx) { queue.splice(idx, 1); renderQueue(); }
 
     function updateStandbyPreview() {
       const kat = document.getElementById('kategori').value;
@@ -244,6 +234,17 @@
       setTimeout(updateVisuals, 1000); 
     }
 
+    // FITUR TOMBOL HAPUS BG
+    function clearBackground() {
+      localStorage.removeItem('bgPath');
+      localStorage.removeItem('bgType');
+      savedBgPath = null;
+      savedBgType = null;
+      document.getElementById('bg-file').value = '';
+      document.getElementById('bg-status').innerText = 'Background dihapus. Kembali ke warna default.';
+      updateVisuals();
+    }
+
     function sendToLive(action) {
       const kat = document.getElementById('kategori').value || '';
       const dataLive = {
@@ -258,7 +259,6 @@
       const colJ2 = document.getElementById('col-j2').value;
       const colJ3 = document.getElementById('col-j3').value;
 
-      // UPDATE LIVE PREVIEW 100% SAMA FORMASINYA DENGAN LED
       if(action === 'clear') {
         liveDiv.innerHTML = '<p class="text-slate-600 text-sm font-bold">Layar Kosong (Standby)</p>';
       } else if (action === 'show-all') {
