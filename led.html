@@ -7,11 +7,15 @@
     :root {
       --pos-y: 0px;
       --box-scale: 1;
+      --box-pad: 48px;
+      
       --font-main: 60px;
       --font-kat: 24px;
+      
       --font-nama: 150%;
       --font-no: 120%;
       --font-title: 100%;
+      
       --col-j1: #eab308; 
       --col-j2: #64748b; 
       --col-j3: #d97706; 
@@ -24,12 +28,17 @@
     }
 
     .anim-container {
-      opacity: 0; transform: translateY(50px) scale(var(--box-scale));
+      opacity: 0; 
+      transform: translateY(50px) scale(var(--box-scale));
       transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
       position: absolute; width: 100%; height: 100%;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
     }
-    .show { opacity: 1; transform: translateY(var(--pos-y)) scale(var(--box-scale)); z-index: 10; }
+    .show { 
+      opacity: 1; 
+      transform: translateY(var(--pos-y)) scale(var(--box-scale)); 
+      z-index: 10; 
+    }
 
     #main-title { font-size: var(--font-main); line-height: 1.1; }
     .title-category { font-size: var(--font-kat); line-height: 1.2; }
@@ -40,16 +49,24 @@
     
     .bg-media { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -10; }
     
+    /* Box padding dikontrol dari --box-pad */
     .box-custom {
-      border: 3px solid rgba(255,255,255,0.4); box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      backdrop-filter: blur(8px); border-radius: 1.5rem;
+      border: 3px solid rgba(255,255,255,0.4);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      backdrop-filter: blur(8px);
+      border-radius: 1.5rem;
       display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding-top: var(--box-pad);
+      padding-bottom: var(--box-pad);
+      padding-left: 2rem;
+      padding-right: 2rem;
     }
   </style>
 </head>
 <body class="m-0 bg-black w-screen h-screen flex items-center justify-center overflow-hidden">
   
   <div class="aspect-16-9-wrapper">
+    
     <!-- Latar Belakang -->
     <video id="bg-video" autoplay loop muted class="bg-media hidden"></video>
     <img id="bg-image" class="bg-media hidden" />
@@ -58,7 +75,7 @@
     <!-- BOX INDIVIDUAL -->
     <div id="box-single" class="anim-container px-10 hidden">
       <h3 id="single-category" class="title-category font-bold text-white mb-6 uppercase tracking-[0.2em] bg-black/60 px-8 py-2 rounded-full border border-white/20 hidden">KATEGORI</h3>
-      <div id="single-card" class="box-custom w-full max-w-4xl p-12 text-center" style="background-color: var(--col-j1);">
+      <div id="single-card" class="box-custom w-full max-w-4xl text-center" style="background-color: var(--col-j1);">
         <h2 id="single-title" class="dynamic-title text-black/80 mb-3 tracking-widest uppercase">JUARA</h2>
         <p id="single-no" class="dynamic-no text-white/90 drop-shadow-md mb-2">-</p>
         <p id="single-name" class="dynamic-name text-white font-black drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)]">-</p>
@@ -67,21 +84,22 @@
 
     <!-- BOX SEMUA JUARA -->
     <div id="box-all" class="anim-container w-full px-8 hidden">
-      <h3 id="all-category" class="title-category font-bold text-white mb-4 uppercase tracking-[0.2em] bg-black/60 px-8 py-2 rounded-full border border-white/20 hidden">KATEGORI</h3>
-      <h1 id="main-title" class="font-black text-white mb-8 tracking-widest uppercase drop-shadow-[0_5px_5px_rgba(0,0,0,0.8)]">PEMENANG LOMBA</h1>
+      <!-- SUSUNAN TEKS DIPERBAIKI: PEMENANG DI ATAS, KATEGORI DI BAWAHNYA -->
+      <h1 id="main-title" class="font-black text-white mb-4 tracking-widest uppercase drop-shadow-[0_5px_5px_rgba(0,0,0,0.8)]">PEMENANG LOMBA</h1>
+      <h3 id="all-category" class="title-category font-bold text-white mb-8 uppercase tracking-[0.2em] bg-black/60 px-8 py-2 rounded-full border border-white/20 hidden">KATEGORI</h3>
       
       <div class="grid grid-cols-3 gap-6 w-full max-w-7xl items-end">
-        <div class="box-custom p-8 text-center transform translate-y-8" style="background-color: var(--col-j3);">
+        <div class="box-custom text-center transform translate-y-8" style="background-color: var(--col-j3);">
           <h2 class="dynamic-title text-black/70 mb-2">JUARA 3</h2>
           <p id="txt-all-j3-no" class="dynamic-no text-white/90 drop-shadow-md mb-1">-</p>
           <p id="txt-all-j3-nama" class="dynamic-name text-white font-bold drop-shadow-md">-</p>
         </div>
-        <div class="box-custom p-12 text-center transform -translate-y-6 z-10" style="background-color: var(--col-j1); border-width: 4px; box-shadow: 0 0 40px var(--col-j1);">
+        <div class="box-custom text-center transform -translate-y-6 z-10" style="background-color: var(--col-j1); border-width: 4px; box-shadow: 0 0 40px var(--col-j1); padding-top: calc(var(--box-pad) + 16px); padding-bottom: calc(var(--box-pad) + 16px);">
           <h2 class="dynamic-title text-black/80 mb-3">JUARA 1</h2>
           <p id="txt-all-j1-no" class="dynamic-no text-white/90 drop-shadow-md mb-2">-</p>
           <p id="txt-all-j1-nama" class="dynamic-name text-white font-black drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)]">-</p>
         </div>
-        <div class="box-custom p-8 text-center transform translate-y-8" style="background-color: var(--col-j2);">
+        <div class="box-custom text-center transform translate-y-8" style="background-color: var(--col-j2);">
           <h2 class="dynamic-title text-black/70 mb-2">JUARA 2</h2>
           <p id="txt-all-j2-no" class="dynamic-no text-white/90 drop-shadow-md mb-1">-</p>
           <p id="txt-all-j2-nama" class="dynamic-name text-white font-bold drop-shadow-md">-</p>
@@ -100,6 +118,7 @@
       if(data.action === 'update-visuals') {
         root.style.setProperty('--pos-y', data.boxY);
         root.style.setProperty('--box-scale', data.boxScale);
+        root.style.setProperty('--box-pad', data.boxPad);
         root.style.setProperty('--font-main', data.sizeMain);
         root.style.setProperty('--font-kat', data.sizeKat);
         root.style.setProperty('--font-nama', data.fontSize);
@@ -114,14 +133,14 @@
           const imageEl = document.getElementById('bg-image');
           document.getElementById('bg-fallback').classList.add('hidden');
           
-          // KUNCI PERBAIKAN WINDOWS EXE: Menggunakan local-media protocol
+          // PROTOKOL KUSTOM AGAR BISA JALAN DI .EXE
           const safeURI = 'local-media://' + data.bgPath.replace(/\\/g, '/');
 
           if (data.bgType && data.bgType.startsWith('video/')) {
             imageEl.classList.add('hidden');
             videoEl.src = safeURI;
             videoEl.classList.remove('hidden'); 
-            videoEl.play().catch(e => console.log("Play interrupted, it's normal."));
+            videoEl.play().catch(e => console.log("Play error", e));
           } else {
             videoEl.classList.add('hidden');
             videoEl.pause();
