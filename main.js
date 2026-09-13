@@ -1,6 +1,61 @@
 const { app, BrowserWindow, screen, ipcMain } = require('electron');
 const { machineIdSync } = require('node-machine-id');
+const http = require('http');
+const fs = require('fs');
 
+// ==========================================
+// SERVER MEDIA LOKAL (ANTI-GAGAL WINDOWS)
+// ==========================================
+let activeMediaPath = '';
+let activeMediaType = '';
+
+ipcMain.on('set-media', (event, data) => {
+  activeMediaPath = data.filePath;
+  activeMediaType = data.mimeType || 'application/octet-stream';
+});
+
+const mediaServer = http.createServer((req, res) => {
+  if (req.url.startsWith('/bg-media') && activeMediaPath && fs.existsSync(activeMediaPath)) {
+    try {
+      const stat = fs.statSync(activeMediaPath);
+      const fileSize = stat.size;
+      const range = req.headers.range;
+
+      if (range) {
+        const parts = range.replace(/bytes=/, "").split("-");
+        const start = parseInt(parts[0], 10);
+        const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+        const chunksize = (end - start) + 1;
+        const file = fs.createReadStream(activeMediaPath, {start, end});
+        res.writeHead(206, {
+          'Content-Range': `bytes ${start}-${end}/${fileSize}`,
+          'Accept-Ranges': 'bytes',
+          'Content-Length': chunksize,
+          'Content-Type': activeMediaType,
+          'Access-Control-Allow-Origin': '*'
+        });
+        file.pipe(res);
+      } else {
+        res.writeHead(200, {
+          'Content-Length': fileSize,
+          'Content-Type': activeMediaType,
+          'Access-Control-Allow-Origin': '*'
+        });
+        fs.createReadStream(activeMediaPath).pipe(res);
+      }
+    } catch(e) {
+      res.writeHead(500); res.end();
+    }
+  } else {
+    res.writeHead(404); res.end();
+  }
+});
+// Berjalan di port senyap agar tidak bentrok
+mediaServer.listen(49201); 
+
+// ==========================================
+// WINDOW MANAGER
+// ==========================================
 let operatorWindow, ledWindow;
 
 function createOperatorWindow() {
