@@ -8,7 +8,6 @@
     ::-webkit-scrollbar { width: 8px; }
     ::-webkit-scrollbar-track { background: #1e293b; }
     ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
-    ::-webkit-scrollbar-thumb:hover { background: #64748b; }
     .prev-box { border: 2px solid rgba(255,255,255,0.4); border-radius: 10px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
   </style>
 </head>
@@ -30,13 +29,12 @@
   <header class="flex justify-between items-center mb-4 pb-3 border-b border-slate-700 shrink-0">
     <div class="flex items-center gap-3">
       <div class="w-10 h-10 bg-blue-600 rounded flex items-center justify-center font-bold text-xl shadow-lg border border-blue-400">PP</div>
-      <h1 class="text-xl font-bold">Pengumuman Pemenang <span class="bg-emerald-600 text-xs px-2 py-1 rounded ml-2">v9.0 Media NATIVE</span></h1>
+      <h1 class="text-xl font-bold">Pengumuman Pemenang <span class="bg-emerald-600 text-xs px-2 py-1 rounded ml-2">v10.0 FINAL PRO</span></h1>
     </div>
     <button onclick="openLedWindow()" class="bg-emerald-600 hover:bg-emerald-500 px-6 py-2 rounded font-bold shadow-[0_0_15px_rgba(16,185,129,0.5)] transition">🖥️ BUKA LAYAR 2 (LED)</button>
   </header>
 
   <div class="flex gap-4 flex-1 h-full overflow-hidden">
-    <!-- PANEL KIRI -->
     <div class="w-[45%] bg-slate-800 p-4 rounded-xl shadow-xl flex flex-col gap-4 overflow-y-auto">
       
       <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600">
@@ -44,16 +42,13 @@
         <div class="flex flex-col gap-2 text-sm mb-3">
           <input type="text" id="q-kat" placeholder="Kategori (Msl: 10K Putra)" class="bg-slate-900 p-2 rounded outline-none border border-slate-700 focus:border-emerald-500">
           <div class="grid grid-cols-2 gap-2 bg-slate-800 p-2 rounded border border-slate-700">
-            <input type="text" id="q-j3-no" placeholder="No. Dada J3" class="bg-slate-900 p-2 rounded border border-slate-600">
-            <input type="text" id="q-j3-nama" placeholder="Nama J3" class="bg-slate-900 p-2 rounded border border-slate-600">
+            <input type="text" id="q-j3-no" placeholder="No. Dada J3" class="bg-slate-900 p-2 rounded border border-slate-600"><input type="text" id="q-j3-nama" placeholder="Nama J3" class="bg-slate-900 p-2 rounded border border-slate-600">
           </div>
           <div class="grid grid-cols-2 gap-2 bg-slate-800 p-2 rounded border border-slate-700">
-            <input type="text" id="q-j2-no" placeholder="No. Dada J2" class="bg-slate-900 p-2 rounded border border-slate-600">
-            <input type="text" id="q-j2-nama" placeholder="Nama J2" class="bg-slate-900 p-2 rounded border border-slate-600">
+            <input type="text" id="q-j2-no" placeholder="No. Dada J2" class="bg-slate-900 p-2 rounded border border-slate-600"><input type="text" id="q-j2-nama" placeholder="Nama J2" class="bg-slate-900 p-2 rounded border border-slate-600">
           </div>
           <div class="grid grid-cols-2 gap-2 bg-slate-800 p-2 rounded border border-yellow-600/50">
-            <input type="text" id="q-j1-no" placeholder="No. Dada J1" class="bg-slate-900 p-2 rounded border border-yellow-600/50 text-yellow-400 font-bold">
-            <input type="text" id="q-j1-nama" placeholder="Nama J1" class="bg-slate-900 p-2 rounded border border-yellow-600/50 text-yellow-400 font-bold">
+            <input type="text" id="q-j1-no" placeholder="No. Dada J1" class="bg-slate-900 p-2 rounded border border-yellow-600/50 text-yellow-400 font-bold"><input type="text" id="q-j1-nama" placeholder="Nama J1" class="bg-slate-900 p-2 rounded border border-yellow-600/50 text-yellow-400 font-bold">
           </div>
           <button onclick="addToQueue()" class="bg-slate-600 hover:bg-slate-500 py-2 rounded font-bold mt-1 text-xs">➕ Tambah ke Antrean</button>
         </div>
@@ -117,17 +112,26 @@
       </div>
     </div>
 
-    <!-- PANEL KANAN (MONITORS) -->
+    <!-- PANEL KANAN -->
     <div class="w-[55%] flex flex-col gap-4 overflow-y-auto pr-2 pb-6">
+      
+      <!-- MONITOR STANDBY KINI MENAMPILKAN BACKGROUND NYATA -->
       <div class="bg-slate-800 p-3 rounded-xl shadow-xl border border-slate-600 flex flex-col shrink-0">
         <h2 class="font-bold text-xs text-blue-400 mb-2 flex items-center"><span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse mr-2"></span> PREVIEW STANDBY (16:9)</h2>
         <div class="w-full aspect-video bg-black rounded border-2 border-dashed border-slate-600 relative overflow-hidden flex flex-col items-center justify-center p-4">
-          <h1 class="text-xl font-black text-white/50 mb-1 tracking-widest uppercase">PEMENANG LOMBA</h1>
-          <p id="prev-kat" class="text-[10px] font-bold text-white/50 mb-2 uppercase tracking-widest bg-blue-900/50 px-4 py-1 rounded-full hidden">KATEGORI</p>
-          <div class="grid grid-cols-3 gap-2 w-full text-center items-end">
-            <div class="prev-box bg-amber-700/50 py-2 px-1"><p class="text-[9px] text-black font-bold">JUARA 3</p><p id="prev-j3-no" class="text-[10px] text-white/80 font-mono mt-1">-</p><p id="prev-j3-nama" class="text-xs font-bold text-white truncate">-</p></div>
-            <div class="prev-box bg-yellow-600/50 py-4 px-2 border-2 border-yellow-500/50 z-10"><p class="text-[10px] text-black font-bold">JUARA 1</p><p id="prev-j1-no" class="text-xs text-white/90 font-mono mt-1">-</p><p id="prev-j1-nama" class="text-sm font-black text-white truncate">-</p></div>
-            <div class="prev-box bg-slate-600/50 py-2 px-1"><p class="text-[9px] text-black font-bold">JUARA 2</p><p id="prev-j2-no" class="text-[10px] text-white/80 font-mono mt-1">-</p><p id="prev-j2-nama" class="text-xs font-bold text-white truncate">-</p></div>
+          
+          <!-- Latar Belakang di Preview -->
+          <video id="prev-bg-video" autoplay loop muted class="absolute inset-0 w-full h-full object-cover -z-10 hidden"></video>
+          <img id="prev-bg-image" class="absolute inset-0 w-full h-full object-cover -z-10 hidden" />
+          <div id="prev-bg-fallback" class="absolute inset-0 bg-slate-900 -z-20"></div>
+
+          <h1 class="text-xl font-black text-white/80 mb-1 tracking-widest uppercase drop-shadow">PEMENANG LOMBA</h1>
+          <p id="prev-kat" class="text-[10px] font-bold text-white mb-2 uppercase tracking-widest bg-black/60 px-4 py-1 rounded-full border border-white/20 hidden">KATEGORI</p>
+          
+          <div class="grid grid-cols-3 gap-2 w-full text-center items-end mt-2">
+            <div class="prev-box bg-amber-700/80 py-2 px-1 backdrop-blur-sm"><p class="text-[9px] text-black font-bold">JUARA 3</p><p id="prev-j3-no" class="text-[10px] text-white/90 font-mono mt-1">-</p><p id="prev-j3-nama" class="text-xs font-bold text-white truncate">-</p></div>
+            <div class="prev-box bg-yellow-600/80 py-4 px-2 border-2 border-yellow-500 backdrop-blur-sm z-10"><p class="text-[10px] text-black font-bold">JUARA 1</p><p id="prev-j1-no" class="text-xs text-white font-mono mt-1">-</p><p id="prev-j1-nama" class="text-sm font-black text-white truncate">-</p></div>
+            <div class="prev-box bg-slate-600/80 py-2 px-1 backdrop-blur-sm"><p class="text-[9px] text-black font-bold">JUARA 2</p><p id="prev-j2-no" class="text-[10px] text-white/90 font-mono mt-1">-</p><p id="prev-j2-nama" class="text-xs font-bold text-white truncate">-</p></div>
           </div>
         </div>
       </div>
@@ -169,6 +173,9 @@
 
       const savedQueue = localStorage.getItem('queueData');
       if (savedQueue) { queue = JSON.parse(savedQueue); renderQueue(); }
+      
+      // Memicu visual awal agar preview background langsung muncul
+      setTimeout(updateVisuals, 500); 
     });
 
     async function activateApp() {
@@ -186,15 +193,14 @@
       const j1no = document.getElementById('q-j1-no').value; const j1nama = document.getElementById('q-j1-nama').value;
       const j2no = document.getElementById('q-j2-no').value; const j2nama = document.getElementById('q-j2-nama').value;
       const j3no = document.getElementById('q-j3-no').value; const j3nama = document.getElementById('q-j3-nama').value;
-      
       if(!k && !j1nama && !j2nama && !j3nama) return; 
       queue.push({k, j1no, j1nama, j2no, j2nama, j3no, j3nama});
-      
       document.getElementById('q-kat').value = '';
       document.getElementById('q-j1-no').value = ''; document.getElementById('q-j1-nama').value = '';
       document.getElementById('q-j2-no').value = ''; document.getElementById('q-j2-nama').value = '';
       document.getElementById('q-j3-no').value = ''; document.getElementById('q-j3-nama').value = '';
       renderQueue();
+      document.getElementById('q-kat').focus(); // Kembali fokus agar nyaman ngetik
     }
 
     function renderQueue() {
@@ -202,7 +208,8 @@
       const list = document.getElementById('queue-list');
       list.innerHTML = '';
       queue.forEach((q, idx) => {
-        list.innerHTML += `<li class="bg-slate-900 p-2 rounded text-xs flex justify-between items-center border border-slate-700"><div class="truncate pr-2"><span class="font-bold text-emerald-400">${q.k || 'Tanpa Kategori'}</span><br><span class="text-slate-400">1: ${q.j1nama} | 2: ${q.j2nama} | 3: ${q.j3nama}</span></div><div class="flex gap-1 shrink-0"><button onclick="loadFromQueue(${idx})" class="bg-blue-600 hover:bg-blue-500 px-3 py-1 rounded font-bold">Load</button><button onclick="deleteQueue(${idx})" class="bg-red-600 hover:bg-red-500 px-2 py-1 rounded font-bold text-white">🗑️</button></div></li>`;
+        // PENTING: event.preventDefault() untuk mencegah BUG Freeze di Windows
+        list.innerHTML += `<li class="bg-slate-900 p-2 rounded text-xs flex justify-between items-center border border-slate-700"><div class="truncate pr-2"><span class="font-bold text-emerald-400">${q.k || 'Tanpa Kategori'}</span><br><span class="text-slate-400">1: ${q.j1nama} | 2: ${q.j2nama} | 3: ${q.j3nama}</span></div><div class="flex gap-1 shrink-0"><button onclick="event.preventDefault(); loadFromQueue(${idx})" class="bg-blue-600 hover:bg-blue-500 px-3 py-1 rounded font-bold">Load</button><button onclick="event.preventDefault(); deleteQueue(${idx})" class="bg-red-600 hover:bg-red-500 px-2 py-1 rounded font-bold text-white">🗑️</button></div></li>`;
       });
     }
 
@@ -215,7 +222,11 @@
       updateStandbyPreview();
     }
 
-    function deleteQueue(idx) { queue.splice(idx, 1); renderQueue(); }
+    function deleteQueue(idx) { 
+      queue.splice(idx, 1); 
+      renderQueue(); 
+      document.getElementById('q-kat').focus(); // Mencegah Windows Freeze
+    }
 
     function updateStandbyPreview() {
       const kat = document.getElementById('kategori').value;
@@ -234,12 +245,9 @@
       setTimeout(updateVisuals, 1000); 
     }
 
-    // FITUR TOMBOL HAPUS BG
     function clearBackground() {
-      localStorage.removeItem('bgPath');
-      localStorage.removeItem('bgType');
-      savedBgPath = null;
-      savedBgType = null;
+      localStorage.removeItem('bgPath'); localStorage.removeItem('bgType');
+      savedBgPath = null; savedBgType = null;
       document.getElementById('bg-file').value = '';
       document.getElementById('bg-status').innerText = 'Background dihapus. Kembali ke warna default.';
       updateVisuals();
@@ -255,9 +263,7 @@
       };
       
       const liveDiv = document.getElementById('live-container');
-      const colJ1 = document.getElementById('col-j1').value;
-      const colJ2 = document.getElementById('col-j2').value;
-      const colJ3 = document.getElementById('col-j3').value;
+      const colJ1 = document.getElementById('col-j1').value; const colJ2 = document.getElementById('col-j2').value; const colJ3 = document.getElementById('col-j3').value;
 
       if(action === 'clear') {
         liveDiv.innerHTML = '<p class="text-slate-600 text-sm font-bold">Layar Kosong (Standby)</p>';
@@ -267,9 +273,9 @@
           <h1 class="text-xl font-black text-white mb-1 tracking-widest uppercase drop-shadow">PEMENANG LOMBA</h1>
           ${katHtml}
           <div class="grid grid-cols-3 gap-2 w-full text-center items-end mt-2">
-            <div class="prev-box py-2 px-1" style="background-color: ${colJ3}"><p class="text-[9px] text-black font-bold">JUARA 3</p><p class="text-[10px] text-white/90 font-mono mt-1">${dataLive.j3no}</p><p class="text-xs font-bold truncate text-white">${dataLive.j3nama}</p></div>
-            <div class="prev-box py-4 px-2 border-2 z-10" style="background-color: ${colJ1}"><p class="text-[10px] text-black font-bold">JUARA 1</p><p class="text-xs text-white/90 font-mono mt-1">${dataLive.j1no}</p><p class="text-sm font-black truncate text-white">${dataLive.j1nama}</p></div>
-            <div class="prev-box py-2 px-1" style="background-color: ${colJ2}"><p class="text-[9px] text-black font-bold">JUARA 2</p><p class="text-[10px] text-white/90 font-mono mt-1">${dataLive.j2no}</p><p class="text-xs font-bold truncate text-white">${dataLive.j2nama}</p></div>
+            <div class="prev-box py-2 px-1 backdrop-blur-sm" style="background-color: ${colJ3}80"><p class="text-[9px] text-black font-bold">JUARA 3</p><p class="text-[10px] text-white/90 font-mono mt-1">${dataLive.j3no}</p><p class="text-xs font-bold truncate text-white">${dataLive.j3nama}</p></div>
+            <div class="prev-box py-4 px-2 border-2 z-10 backdrop-blur-sm" style="background-color: ${colJ1}80"><p class="text-[10px] text-black font-bold">JUARA 1</p><p class="text-xs text-white/90 font-mono mt-1">${dataLive.j1no}</p><p class="text-sm font-black truncate text-white">${dataLive.j1nama}</p></div>
+            <div class="prev-box py-2 px-1 backdrop-blur-sm" style="background-color: ${colJ2}80"><p class="text-[9px] text-black font-bold">JUARA 2</p><p class="text-[10px] text-white/90 font-mono mt-1">${dataLive.j2no}</p><p class="text-xs font-bold truncate text-white">${dataLive.j2nama}</p></div>
           </div>`;
       } else {
         let title = action === 'show-j1' ? 'JUARA 1' : (action === 'show-j2' ? 'JUARA 2' : 'JUARA 3');
@@ -277,11 +283,9 @@
         let no = action === 'show-j1' ? dataLive.j1no : (action === 'show-j2' ? dataLive.j2no : dataLive.j3no);
         let nama = action === 'show-j1' ? dataLive.j1nama : (action === 'show-j2' ? dataLive.j2nama : dataLive.j3nama);
         let activeCol = action === 'show-j1' ? colJ1 : (action === 'show-j2' ? colJ2 : colJ3);
-        liveDiv.innerHTML = `${katHtml}<div class="prev-box p-4 text-center w-3/4" style="background-color: ${activeCol}"><p class="text-xs text-black font-bold mb-1">${title}</p><p class="text-xs text-white/90 font-mono">${no}</p><p class="text-xl font-black text-white truncate">${nama}</p></div>`;
+        liveDiv.innerHTML = `${katHtml}<div class="prev-box p-4 text-center w-3/4 backdrop-blur-sm" style="background-color: ${activeCol}80"><p class="text-xs text-black font-bold mb-1">${title}</p><p class="text-xs text-white/90 font-mono">${no}</p><p class="text-xl font-black text-white truncate">${nama}</p></div>`;
       }
-
-      ipcRenderer.send('send-to-led', dataLive);
-      setTimeout(updateVisuals, 100); 
+      ipcRenderer.send('send-to-led', dataLive); setTimeout(updateVisuals, 100); 
     }
 
     function updateVisuals() {
@@ -294,6 +298,25 @@
         localStorage.setItem('bgType', savedBgType);
         let fileName = savedBgPath.split('\\').pop().split('/').pop();
         document.getElementById('bg-status').innerText = `✅ Tersimpan: ${fileName}`;
+      }
+
+      // UPDATE BACKGROUND DI PREVIEW OPERATOR
+      const prevVideo = document.getElementById('prev-bg-video');
+      const prevImage = document.getElementById('prev-bg-image');
+      const prevFallback = document.getElementById('prev-bg-fallback');
+      
+      if (savedBgPath) {
+        prevFallback.classList.add('hidden');
+        const safeURI = 'safe-file://' + encodeURIComponent(savedBgPath);
+        if (savedBgType && savedBgType.startsWith('video/')) {
+          prevImage.classList.add('hidden'); prevVideo.src = safeURI;
+          prevVideo.classList.remove('hidden'); prevVideo.play().catch(e=>{});
+        } else {
+          prevVideo.classList.add('hidden'); prevImage.src = safeURI;
+          prevImage.classList.remove('hidden');
+        }
+      } else {
+        prevVideo.classList.add('hidden'); prevImage.classList.add('hidden'); prevFallback.classList.remove('hidden');
       }
 
       const settings = ['col-j3', 'col-j1', 'col-j2', 'title-size', 'no-size', 'font-size', 'box-y', 'size-main', 'size-kat', 'box-scale', 'box-pad'];
