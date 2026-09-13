@@ -28,6 +28,7 @@
     .dynamic-no { font-size: var(--font-no); font-family: 'Courier New', monospace; font-weight: 700; line-height: 1.2;}
     .dynamic-name { font-size: var(--font-nama); word-break: break-word; line-height: 1.1; font-family: 'Segoe UI', sans-serif;}
     .bg-media { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -10; }
+    
     .box-custom {
       border: 3px solid rgba(255,255,255,0.4); box-shadow: 0 10px 30px rgba(0,0,0,0.5);
       backdrop-filter: blur(8px); border-radius: 1.5rem;
@@ -44,7 +45,10 @@
     <div id="bg-fallback" class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-900 to-black -z-20"></div>
 
     <div id="box-single" class="anim-container px-10 hidden">
-      <h3 id="single-category" class="title-category font-bold text-white mb-6 uppercase tracking-[0.2em] bg-black/60 px-8 py-2 rounded-full border border-white/20 hidden">KATEGORI</h3>
+      <!-- SUSUNAN YANG BENAR -->
+      <h1 id="single-title-main" class="font-black text-white mb-4 tracking-widest uppercase drop-shadow-[0_5px_5px_rgba(0,0,0,0.8)]" style="font-size: var(--font-main);">PEMENANG LOMBA</h1>
+      <h3 id="single-category" class="title-category font-bold text-white mb-8 uppercase tracking-[0.2em] bg-black/60 px-8 py-2 rounded-full border border-white/20 hidden">KATEGORI</h3>
+      
       <div id="single-card" class="box-custom w-full max-w-4xl text-center" style="background-color: var(--col-j1);">
         <h2 id="single-title" class="dynamic-title text-black/80 mb-3 tracking-widest uppercase">JUARA</h2>
         <p id="single-no" class="dynamic-no text-white/90 drop-shadow-md mb-2">-</p>
@@ -53,6 +57,7 @@
     </div>
 
     <div id="box-all" class="anim-container w-full px-8 hidden">
+      <!-- SUSUNAN YANG BENAR -->
       <h1 id="main-title" class="font-black text-white mb-4 tracking-widest uppercase drop-shadow-[0_5px_5px_rgba(0,0,0,0.8)]">PEMENANG LOMBA</h1>
       <h3 id="all-category" class="title-category font-bold text-white mb-8 uppercase tracking-[0.2em] bg-black/60 px-8 py-2 rounded-full border border-white/20 hidden">KATEGORI</h3>
       
@@ -78,8 +83,6 @@
 
   <script>
     const { ipcRenderer } = require('electron');
-    const url = require('url'); // MENGGUNAKAN NATIVE NODE.JS UNTUK FIX PATH WINDOWS
-    
     const root = document.documentElement;
     const boxAll = document.getElementById('box-all');
     const boxSingle = document.getElementById('box-single');
@@ -93,21 +96,20 @@
         root.style.setProperty('--col-j1', data.colJ1); root.style.setProperty('--col-j2', data.colJ2);
         root.style.setProperty('--col-j3', data.colJ3);
 
-        const videoEl = document.getElementById('bg-video');
-        const imageEl = document.getElementById('bg-image');
-        const fallback = document.getElementById('bg-fallback');
-
         if(data.bgPath) {
-          fallback.classList.add('hidden');
-          // KONVERSI PATH SEKALIGUS FIX 100% MASALAH GAMBAR/VIDEO
-          const safeURI = url.pathToFileURL(data.bgPath).href;
+          const videoEl = document.getElementById('bg-video');
+          const imageEl = document.getElementById('bg-image');
+          document.getElementById('bg-fallback').classList.add('hidden');
+          
+          // PROTOKOL JALUR KHUSUS ANTI-GAGAL
+          const safeURI = 'safe-file://' + encodeURIComponent(data.bgPath);
 
           if (data.bgType && data.bgType.startsWith('video/')) {
             imageEl.classList.add('hidden');
             videoEl.src = safeURI;
             videoEl.classList.remove('hidden'); 
-            videoEl.load(); // Paksa muat
-            videoEl.play().catch(e => console.log("Video Play Error:", e));
+            videoEl.load();
+            videoEl.play().catch(e => console.log("Play error", e));
           } else {
             videoEl.classList.add('hidden');
             videoEl.pause();
@@ -115,10 +117,9 @@
             imageEl.classList.remove('hidden');
           }
         } else {
-          // Jika background dihapus, kembalikan ke default gradient
-          videoEl.classList.add('hidden'); videoEl.pause();
-          imageEl.classList.add('hidden');
-          fallback.classList.remove('hidden');
+          document.getElementById('bg-video').classList.add('hidden');
+          document.getElementById('bg-image').classList.add('hidden');
+          document.getElementById('bg-fallback').classList.remove('hidden');
         }
         return; 
       }
@@ -131,11 +132,14 @@
 
       setTimeout(() => {
         boxAll.classList.remove('hidden'); boxSingle.classList.remove('hidden');
-        const catAll = document.getElementById('all-category'); const catSingle = document.getElementById('single-category');
+        const catAll = document.getElementById('all-category');
+        const catSingle = document.getElementById('single-category');
         if (data.kategori && data.kategori.trim() !== '') {
             catAll.innerText = data.kategori; catSingle.innerText = data.kategori;
             catAll.classList.remove('hidden'); catSingle.classList.remove('hidden');
-        } else { catAll.classList.add('hidden'); catSingle.classList.add('hidden'); }
+        } else {
+            catAll.classList.add('hidden'); catSingle.classList.add('hidden');
+        }
 
         if(data.action === 'show-all') {
           boxSingle.classList.add('hidden');
