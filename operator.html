@@ -13,7 +13,7 @@
 </head>
 <body class="bg-slate-900 text-white h-screen p-4 font-sans flex flex-col overflow-hidden relative">
   
-  <!-- LOCK SCREEN SYSTEM (FITUR WAJIB) -->
+  <!-- LOCK SCREEN SYSTEM -->
   <div id="lock-screen" class="fixed inset-0 bg-slate-950 z-50 flex items-center justify-center">
     <div class="bg-slate-800 p-8 rounded-xl shadow-2xl max-w-md w-full text-center border border-slate-700">
       <div class="w-16 h-16 bg-blue-600 rounded-xl mx-auto flex items-center justify-center font-bold text-3xl border-2 border-blue-400 mb-4 shadow-[0_0_20px_rgba(37,99,235,0.5)]">PP</div>
@@ -33,13 +33,13 @@
   <header class="flex justify-between items-center mb-4 pb-3 border-b border-slate-700 shrink-0">
     <div class="flex items-center gap-3">
       <div class="w-10 h-10 bg-blue-600 rounded flex items-center justify-center font-bold text-xl shadow-lg border border-blue-400">PP</div>
-      <h1 class="text-xl font-bold">Pengumuman Pemenang <span class="bg-emerald-600 text-xs px-2 py-1 rounded ml-2">v7.0 Secure & Media Fix</span></h1>
+      <h1 class="text-xl font-bold">Pengumuman Pemenang <span class="bg-emerald-600 text-xs px-2 py-1 rounded ml-2">v7.1 Bug Fix</span></h1>
     </div>
     <button onclick="openLedWindow()" class="bg-emerald-600 hover:bg-emerald-500 px-6 py-2 rounded font-bold shadow-[0_0_15px_rgba(16,185,129,0.5)] transition">🖥️ BUKA LAYAR 2 (LED)</button>
   </header>
 
   <div class="flex gap-4 flex-1 h-full overflow-hidden">
-    <!-- PANEL KIRI (Scrollable) -->
+    <!-- PANEL KIRI -->
     <div class="w-[45%] bg-slate-800 p-4 rounded-xl shadow-xl flex flex-col gap-4 overflow-y-auto">
       
       <!-- 1. DAFTAR TUNGGU (QUEUE) -->
@@ -144,7 +144,6 @@
   <script>
     const { ipcRenderer } = require('electron');
 
-    // === SISTEM LISENSI & AUTO-SAVE ===
     let queue = [];
     let savedBgPath = localStorage.getItem('bgPath') || null;
     let savedBgType = localStorage.getItem('bgType') || null;
@@ -186,21 +185,25 @@
       }
     }
 
-    // === SISTEM ANTREAN & PREVIEW (Sama seperti sebelumnya) ===
     function addToQueue() {
       const k = document.getElementById('q-kat').value;
       const j1no = document.getElementById('q-j1-no').value; const j1nama = document.getElementById('q-j1-nama').value;
       const j2no = document.getElementById('q-j2-no').value; const j2nama = document.getElementById('q-j2-nama').value;
       const j3no = document.getElementById('q-j3-no').value; const j3nama = document.getElementById('q-j3-nama').value;
       
+      // Jangan jalankan jika form kosong
       if(!k && !j1nama && !j2nama && !j3nama) return; 
       queue.push({k, j1no, j1nama, j2no, j2nama, j3no, j3nama});
       
+      // Bersihkan input setelah klik Tambah
       document.getElementById('q-kat').value = '';
       document.getElementById('q-j1-no').value = ''; document.getElementById('q-j1-nama').value = '';
       document.getElementById('q-j2-no').value = ''; document.getElementById('q-j2-nama').value = '';
       document.getElementById('q-j3-no').value = ''; document.getElementById('q-j3-nama').value = '';
       renderQueue();
+      
+      // Focus kembali ke input kategori untuk mempermudah ngetik
+      document.getElementById('q-kat').focus();
     }
 
     function renderQueue() {
@@ -220,7 +223,14 @@
       document.getElementById('j3-no').value = q.j3no; document.getElementById('j3-nama').value = q.j3nama;
       updateStandbyPreview();
     }
-    function deleteQueue(idx) { if(confirm('Hapus antrean ini?')) { queue.splice(idx, 1); renderQueue(); } }
+
+    // FIX BUGS: Menghapus peringatan confirm() yang membuat Electron membeku (Freeze)
+    function deleteQueue(idx) { 
+      queue.splice(idx, 1); 
+      renderQueue(); 
+      // Focus ke area lain agar keyboard tetap aktif
+      document.getElementById('q-kat').focus();
+    }
 
     function updateStandbyPreview() {
       const kat = document.getElementById('kategori').value;
